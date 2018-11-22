@@ -1,34 +1,54 @@
-use crate::ecs::{GenManager,ECVec};
+use crate::ecs::{GenManager,ECVec,GenItem};
+use piston_window::rectangle::{Rectangle,Border};
+
 
 pub struct State{
+    //Gen Controlled
     pub g_man:GenManager,
-    pub positions:ECVec<Position>,
+    pub grid_pos:ECVec<Position>,
     pub tiles:ECVec<Tile>,
+    pub draw:ECVec<DrawCp>,
+
+    //Indexes
+    pub ls_tiles:Vec<GenItem>,
+
+    //Useful Data
+    pub d_time:f64,
+    
 }
 
 impl State{
     pub fn new()->Self{
         State{
+            //Gen Controlled
             g_man:GenManager::new(),
-            positions:ECVec::new(),
+            grid_pos:ECVec::new(),
             tiles:ECVec::new(),
+            draw:ECVec::new(), 
+
+            //Indexes
+            ls_tiles:Vec::new(),
+
+            //useful Data
+            d_time:0.0,
         }
     }
 
     pub fn add_tile(&mut self,t:Tile,p:Position){
         let gi = self.g_man.add();
-        self.positions.put(gi,p);
+        self.grid_pos.put(gi,p);
         self.tiles.put(gi,t);
+        self.ls_tiles.push(gi);
     }
 }
 
 pub struct Position{
-    pub x:u32,
-    pub y:u32,
+    pub x:u8,
+    pub y:u8,
 }
 
 impl Position{
-    pub fn new(x:u32,y:u32)->Self{
+    pub fn new(x:u8,y:u8)->Self{
         Position{x,y}
     }
 }
@@ -45,8 +65,12 @@ pub enum Wall{
     Spike,
 }
 
+pub struct DrawCp{
+    pub r:[f64;4],//position x,y,w,h
+    pub mode:DrawMode,
+}
+
 pub enum DrawMode{
-    No,
-    Shape,
+    Rect([f32;4]),
 }
 

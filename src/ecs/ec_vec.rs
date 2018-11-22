@@ -1,8 +1,8 @@
 use crate::ecs::gen::GenItem;
 
-struct ECItem<T>{
-    gen:u64,
-    t:T,
+pub struct ECItem<T>{
+    pub gen:u64,
+    pub t:T,
 }
 
 impl<T> ECItem<T>{
@@ -66,6 +66,11 @@ impl<T> ECVec<T>{
             v:self,
         }
     }
+
+    //TODO, fix to get a better iterator. 
+    pub fn iter_mut<'a>(&'a mut self)->std::iter::Enumerate<std::slice::IterMut<'a, std::option::Option<ECItem<T>>>>{
+        self.items.iter_mut().enumerate()
+    }
 }
 
 pub struct ECIter<'a,T>{
@@ -86,4 +91,5 @@ impl<'a,T> Iterator for ECIter<'a,T>
         return None;
     }
 }
+
 

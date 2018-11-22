@@ -1,16 +1,18 @@
 use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,draw_state};
 
-use piston_window::rectangle::{Rectangle,Border};
 
 
 mod ecs;
 mod state;
+mod draw;
+mod mover;
 
 fn main() {
 
     let mut g_state = state::State::new();
 
     g_state.add_tile(state::Tile::Man,state::Position{x:2,y:4});
+    g_state.add_tile(state::Tile::Door(2),state::Position{x:3,y:4});
 
     
 
@@ -20,22 +22,15 @@ fn main() {
                     .build()
                     .unwrap();
     while let Some(e) = window.next(){        
+
         window.draw_2d(&e,|c,g|{
-            clear([1.,0.,0.,1.],g);
-            let border = Border{color:[0.,0.,0.,1.],radius:5.};
-            for (gi,pi) in g_state.positions.iter(){
-                Rectangle::new([0.0,1.,0.,0.1])
-                    .border(border)
-                    .draw([(pi.x*50) as f64,(pi.y*50) as f64,50.,50.],
-                          &draw_state::DrawState::new_alpha(),
-                          c.transform,g);
-            }
-            
+            draw::draw_sys(&g_state,c,g);
         });
         match e {
             
             Event::Loop(Loop::Update(d))=>{
-                //println!("Udate {:?}",d);
+                mover::move_sys(&mut g_state,d.dt);
+                draw::tile_to_draw_sys(&mut g_state);
             },
             _=>{},//println!("OTHER {:?}",e),
         }
