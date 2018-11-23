@@ -51,7 +51,7 @@ impl State{
     }
 }
 
-#[derive(Copy,Clone)]
+#[derive(Copy,Clone,PartialEq,Debug)]
 pub struct Position{
     pub x:u8,
     pub y:u8,

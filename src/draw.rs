@@ -39,10 +39,8 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
     });
     clear([1.,0.,0.,1.],g);
     let border = Border{color:[0.,0.,0.,1.],radius:2.};
-    println!("Refresh");
     for gi  in ls_draw {
         if let Some(dc)=s.draw.get(*gi){
-            println!("{:?}",dc.z);
             match dc.mode{
                 DrawMode::Rect(col)=> Rectangle::new(col)
                         .border(border)

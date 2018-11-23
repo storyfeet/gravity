@@ -72,7 +72,7 @@ impl<T> ECVec<T>{
         self.items.iter_mut().enumerate()
     }
 
-    pub fn for_each<F:Fn(GenItem,&mut T)>(&mut self,f:F){
+    pub fn for_each<F:FnMut(GenItem,&mut T)>(&mut self,mut f:F){
         for (loc,v) in self.items.iter_mut().enumerate() {
             if let Some(ECItem{gen,t}) = v {
                 f(GenItem{gen:*gen,loc},t);
