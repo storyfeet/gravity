@@ -49,6 +49,19 @@ impl State{
         self.tiles.put(gi,t);
         self.ls_tiles.push(gi);
     }
+
+    pub fn drop(&mut self,gi:GenItem){
+        self.g_man.drop_item(gi);
+        self.grid_pos.drop(gi);
+        self.tiles.drop(gi);
+        self.draw.drop(gi);
+
+        //Indexes
+        self.ls_tiles.retain(|&x| x!= gi);
+        self.ls_draw.retain(|&x| x!= gi);
+
+
+    }
 }
 
 #[derive(Copy,Clone,PartialEq,Debug)]

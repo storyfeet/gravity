@@ -1,29 +1,29 @@
 use piston_window::{ButtonArgs,keyboard::Key,Button,ButtonState};
 use crate::state::{State,Tile,Position};
+use crate::ecs::{GenItem};
 use self::Button::*;
 
-fn toggle_tile(s:&mut State,tp:Position){
-    let gpos = &mut s.grid_pos;
-    let gtile = &mut s.tiles;
-    let p_ref = s.p_ref;
-    let mut found = false;
-    gpos.for_each(|gi,p|{
-        if gi == p_ref{return}
-        if tp == *p {
-            if let Some(t) = gtile.get_mut(gi){
-                *t = match t {
-                    Tile::Man=>Tile::Door(1),
-                    _=>Tile::Man,
-                };
-                found = true;
-            }
+fn toggle_tile(s:&mut State,tp:Position)->Option<()>{
+    let mut found:Option<GenItem> = None;
+    for (gi,p) in s.grid_pos.iter() {
+        if gi == s.p_ref{ continue} 
+        if *p == tp {
+            found = Some(gi);
+            break;
         }
-    });
-
-    if !found {
-        s.add_tile(Tile::Door(0),tp);
     }
+    match found{ 
+        None=>s.add_tile(Tile::Man,tp),
+        Some(gi)=>{
+            match *s.tiles.get(gi)? {
+                Tile::Man=>*s.tiles.get_mut(gi)? = Tile::Door(1),
+                _=>s.drop(gi),
+            };
+        },
+    };
+    Some(())
 }
+
 
 pub fn key_sys(s:&mut State,k:ButtonArgs)->Option<()>{
     if k.state != ButtonState::Press{
