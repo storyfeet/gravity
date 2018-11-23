@@ -1,5 +1,5 @@
 
-#[derive(Copy,Clone)]
+#[derive(Copy,Clone,PartialEq,Debug)]
 pub struct GenItem{
     pub loc:usize,
     pub gen:u64,

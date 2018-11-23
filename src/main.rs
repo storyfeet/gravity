@@ -1,11 +1,10 @@
-use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,draw_state};
-
-
+use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,draw_state,Input};
 
 mod ecs;
 mod state;
 mod draw;
 mod mover;
+mod user;
 
 fn main() {
 
@@ -24,9 +23,12 @@ fn main() {
     while let Some(e) = window.next(){        
 
         window.draw_2d(&e,|c,g|{
-            draw::draw_sys(&g_state,c,g);
+            draw::draw_sys(&mut g_state,c,g);
         });
         match e {
+            Event::Input(Input::Button(bargs))=>{
+                user::key_sys(&mut g_state,bargs);
+            }
             
             Event::Loop(Loop::Update(d))=>{
                 mover::move_sys(&mut g_state,d.dt);

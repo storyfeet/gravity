@@ -71,6 +71,14 @@ impl<T> ECVec<T>{
     pub fn iter_mut<'a>(&'a mut self)->std::iter::Enumerate<std::slice::IterMut<'a, std::option::Option<ECItem<T>>>>{
         self.items.iter_mut().enumerate()
     }
+
+    pub fn for_each<F:Fn(GenItem,&mut T)>(&mut self,f:F){
+        for (loc,v) in self.items.iter_mut().enumerate() {
+            if let Some(ECItem{gen,t}) = v {
+                f(GenItem{gen:*gen,loc},t);
+            }
+        }
+    }
 }
 
 pub struct ECIter<'a,T>{
@@ -91,5 +99,7 @@ impl<'a,T> Iterator for ECIter<'a,T>
         return None;
     }
 }
+
+
 
 

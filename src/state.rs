@@ -11,27 +11,36 @@ pub struct State{
 
     //Indexes
     pub ls_tiles:Vec<GenItem>,
+    pub ls_draw:Vec<GenItem>,
 
     //Useful Data
     pub d_time:f64,
-    
+    pub p_ref:GenItem,
 }
 
 impl State{
     pub fn new()->Self{
-        State{
+        let mut g_man = GenManager::new();
+        let p_ref = g_man.add();
+        let mut res = State{
             //Gen Controlled
-            g_man:GenManager::new(),
+            g_man,
             grid_pos:ECVec::new(),
             tiles:ECVec::new(),
             draw:ECVec::new(), 
 
             //Indexes
             ls_tiles:Vec::new(),
+            ls_draw:Vec::new(),
 
             //useful Data
             d_time:0.0,
-        }
+            p_ref,
+        };
+        res.grid_pos.put(p_ref,Position{x:0,y:0});
+        res.tiles.put(p_ref,Tile::Editor);
+        res.ls_tiles.push(p_ref);
+        res
     }
 
     pub fn add_tile(&mut self,t:Tile,p:Position){
@@ -54,6 +63,7 @@ impl Position{
 }
 
 pub enum Tile{
+    Editor,
     Man,
     Block,
     Door(u8),
@@ -67,6 +77,7 @@ pub enum Wall{
 
 pub struct DrawCp{
     pub r:[f64;4],//position x,y,w,h
+    pub z:u8,
     pub mode:DrawMode,
 }
 
