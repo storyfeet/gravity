@@ -1,5 +1,7 @@
 use crate::ecs::{GenManager,ECVec,GenItem};
 use piston_window::rectangle::{Rectangle,Border};
+use piston_window::ButtonState;
+use crate::grid::WallGrid;
 
 
 pub struct State{
@@ -14,8 +16,10 @@ pub struct State{
     pub ls_draw:Vec<GenItem>,
 
     //Useful Data
+    pub walls:WallGrid,
     pub d_time:f64,
     pub p_ref:GenItem,
+    pub ctrl_state:ButtonState,
 }
 
 impl State{
@@ -34,9 +38,12 @@ impl State{
             ls_draw:Vec::new(),
 
             //useful Data
+            walls:WallGrid::new(3,3),
             d_time:0.0,
             p_ref,
+            ctrl_state:ButtonState::Release,
         };
+
         res.grid_pos.put(p_ref,Position{x:0,y:0});
         res.tiles.put(p_ref,Tile::Editor);
         res.ls_tiles.push(p_ref);
@@ -83,11 +90,6 @@ pub enum Tile{
     Door(u8),
 }
 
-pub enum Wall{
-    Clear,
-    Wall,
-    Spike,
-}
 
 pub struct DrawCp{
     pub r:[f64;4],//position x,y,w,h

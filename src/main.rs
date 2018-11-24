@@ -3,8 +3,9 @@ use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,draw_state,Inpu
 mod ecs;
 mod state;
 mod draw;
-mod mover;
+//mod mover;
 mod user;
+mod grid;
 
 fn main() {
 
@@ -23,6 +24,8 @@ fn main() {
     while let Some(e) = window.next(){        
 
         window.draw_2d(&e,|c,g|{
+            clear([1.,0.,0.,1.],g);
+            draw::grid_draw_sys(&g_state,c,g);
             draw::draw_sys(&mut g_state,c,g);
         });
         match e {
@@ -31,7 +34,7 @@ fn main() {
             }
             
             Event::Loop(Loop::Update(d))=>{
-                mover::move_sys(&mut g_state,d.dt);
+                //mover::move_sys(&mut g_state,d.dt);
                 draw::tile_to_draw_sys(&mut g_state);
             },
             _=>{},//println!("OTHER {:?}",e),
