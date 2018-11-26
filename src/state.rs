@@ -19,7 +19,8 @@ pub struct State{
     pub walls:WallGrid,
     pub d_time:f64,
     pub p_ref:GenItem,
-    pub ctrl_state:ButtonState,
+    pub btn_ctrl:ButtonState,
+    pub btn_shift:ButtonState,
 }
 
 impl State{
@@ -41,7 +42,8 @@ impl State{
             walls:WallGrid::new(3,3),
             d_time:0.0,
             p_ref,
-            ctrl_state:ButtonState::Release,
+            btn_ctrl:ButtonState::Release,
+            btn_shift:ButtonState::Release,
         };
 
         res.grid_pos.put(p_ref,Position{x:0,y:0});
