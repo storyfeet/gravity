@@ -1,7 +1,7 @@
 use crate::ecs::{GenManager,ECVec,GenItem};
 use piston_window::rectangle::{Rectangle,Border};
 use piston_window::ButtonState;
-use crate::grid::WallGrid;
+use crate::grid::EdgeGrid;
 use crate::texture_loader::TexLoader;
 
 
@@ -14,10 +14,9 @@ pub struct State{
 
     //Indexes
     pub ls_tiles:Vec<GenItem>,
-    pub ls_draw:Vec<GenItem>,
 
     //Useful Data
-    pub walls:WallGrid,
+    pub walls:EdgeGrid,
     pub d_time:f64,
     pub p_ref:GenItem,
     pub btn_ctrl:ButtonState,
@@ -39,10 +38,9 @@ impl State{
 
             //Indexes
             ls_tiles:Vec::new(),
-            ls_draw:Vec::new(),
 
             //useful Data
-            walls:WallGrid::new(3,3),
+            walls:EdgeGrid::new(3,3),
             d_time:0.0,
             p_ref,
             btn_ctrl:ButtonState::Release,
@@ -72,7 +70,6 @@ impl State{
 
         //Indexes
         self.ls_tiles.retain(|&x| x!= gi);
-        self.ls_draw.retain(|&x| x!= gi);
 
 
     }

@@ -2,7 +2,7 @@ use piston_window::{ButtonArgs,keyboard::Key,Button,ButtonState};
 use crate::state::{State,Tile,Position};
 use crate::ecs::{GenItem};
 use self::Button::*;
-use crate::grid::{WallGrid,UP,DOWN,LEFT,RIGHT};
+use crate::grid::{EdgeGrid,UP,DOWN,LEFT,RIGHT};
 
 use std::ops::{Sub,SubAssign};
 
@@ -63,10 +63,10 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Option<()>{
     if s.btn_shift == ButtonState::Press && s.btn_ctrl == ButtonState::Press{
         let (sw,sh) = (s.walls.w,s.walls.h);
         match k.button {
-            Keyboard(Key::Left)=>s.walls = WallGrid::new(_dec(sw,1),sh),
-            Keyboard(Key::Right)=>s.walls = WallGrid::new(sw+1,sh),
-            Keyboard(Key::Up)=>s.walls = WallGrid::new(sw,_dec(sh,1)),
-            Keyboard(Key::Down)=>s.walls = WallGrid::new(sw,sh+1),
+            Keyboard(Key::Left)=>s.walls = EdgeGrid::new(_dec(sw,1),sh),
+            Keyboard(Key::Right)=>s.walls = EdgeGrid::new(sw+1,sh),
+            Keyboard(Key::Up)=>s.walls = EdgeGrid::new(sw,_dec(sh,1)),
+            Keyboard(Key::Down)=>s.walls = EdgeGrid::new(sw,sh+1),
             _=>{},
         }
         return Some(())

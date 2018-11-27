@@ -1,5 +1,7 @@
 use crate::state::{State,Position,Tile,DrawMode,DrawCp};
-use crate::grid::{Wall,LEFT,UP,RIGHT,DOWN};
+use crate::grid::{Edge,LEFT,UP,RIGHT,DOWN};
+use crate::ecs::gen::GenItem;
+
 use piston_window::rectangle::{Rectangle,Border};
 use piston_window::{Context,G2d,draw_state,line,Transformed};
 use std::cmp::Ordering;
@@ -33,9 +35,6 @@ pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
             Tile::Door(_)=>(r,DrawMode::Rect([0.5,0.5,0.5,1.]),0)
         };
         s.draw.put(*gi,DrawCp{r,mode,z});
-        if !s.ls_draw.contains(gi){
-            s.ls_draw.push(*gi);
-        }
     }
     Some(())
 }
@@ -43,11 +42,11 @@ pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
 //For now the z sort happens here. I'd like to optimize to it only happens on a change, but not
 //biggie
 pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
-    let ls_draw = &mut s.ls_draw;
-    let draw_list = &s.draw;
+    let mut ls_draw:Vec<GenItem> = s.draw.iter().map(|(g,_)|g.clone()).collect();
+
     ls_draw.sort_unstable_by(|ga,gb|{
-        if let Some(a) = draw_list.get(*ga){
-            if let Some(b) = draw_list.get(*gb){
+        if let Some(a) = s.draw.get(*ga){
+            if let Some(b) = s.draw.get(*gb){
                 return a.z.cmp(&b.z);
             }
         }
@@ -55,8 +54,8 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
         return Ordering::Equal;
     });
     let border = Border{color:[0.,0.,0.,1.],radius:2.};
-    for gi  in ls_draw {
-        if let Some(dc)=s.draw.get(*gi){
+    for gi in ls_draw {
+        if let Some(dc)=s.draw.get(gi){
             match dc.mode{
                 DrawMode::Rect(col)=> Rectangle::new(col)
                         .border(border)
@@ -103,10 +102,10 @@ pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
             let (dx2,dy2) = _rot_about(x2,y2,cx,cy,dr);
 
             match w[dr]{
-                Wall::Line=>{
+                Edge::Wall=>{
                     line([0.,0.,1.,1.],2.,[dx1,dy1,dx2,dy2],c.transform,g);
                 }
-                Wall::Spike=>{
+                Edge::Spike=>{
                     line([1.,0.,0.,1.],2.,[dx1,dy1,dx2,dy2],c.transform,g);
                 }
                 _=>{},

@@ -5,28 +5,29 @@ pub const LEFT:usize = 1;
 pub const DOWN:usize = 2;
 pub const RIGHT:usize = 3;
 
-pub type TileWall = [Wall;4];
+pub type TileEdge = [Edge;4];
 
-pub enum Wall{
+pub enum Edge{
     Clear,
-    Line,
+    Wall,
     Spike,
+    Door,
 }
 
-pub struct WallGrid{
+pub struct EdgeGrid{
     pub w:usize,
     pub h:usize,
-    pub v:Vec<TileWall>,
+    pub v:Vec<TileEdge>,
 }
 
-impl WallGrid{
+impl EdgeGrid{
     pub fn new(w:usize,h:usize)->Self{ 
         let cap = w*h;
         let mut v = Vec::with_capacity(cap);
         for _ in 0..cap{
-            v.push([Wall::Clear,Wall::Clear,Wall::Clear,Wall::Clear]);
+            v.push([Edge::Clear,Edge::Clear,Edge::Clear,Edge::Clear]);
         }
-        WallGrid{w,h,v}
+        EdgeGrid{w,h,v}
     }
 
     pub fn toggle_wall(&mut self, p:Position,dir:usize){
@@ -37,9 +38,10 @@ impl WallGrid{
         if n >= self.v.len() {return}
         if dir >3 {return}
         self.v[n][dir] = match self.v[n][dir]{
-            Wall::Clear=>Wall::Line,
-            Wall::Line=>Wall::Spike,
-            Wall::Spike=>Wall::Clear,
+            Edge::Clear=>Edge::Wall,
+            Edge::Wall=>Edge::Spike,
+            Edge::Spike=>Edge::Door,
+            Edge::Door=>Edge::Clear,
         };
     }
 
