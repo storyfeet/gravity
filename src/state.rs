@@ -12,8 +12,6 @@ pub struct State{
     pub tiles:ECVec<Tile>,
     pub draw:ECVec<DrawCp>,
 
-    //Indexes
-    pub ls_tiles:Vec<GenItem>,
 
     //Useful Data
     pub walls:EdgeGrid,
@@ -36,8 +34,6 @@ impl State{
             tiles:ECVec::new(),
             draw:ECVec::new(), 
 
-            //Indexes
-            ls_tiles:Vec::new(),
 
             //useful Data
             walls:EdgeGrid::new(3,3),
@@ -51,7 +47,6 @@ impl State{
 
         res.grid_pos.put(p_ref,Position{x:0,y:0});
         res.tiles.put(p_ref,Tile::Editor);
-        res.ls_tiles.push(p_ref);
         res
     }
 
@@ -59,7 +54,6 @@ impl State{
         let gi = self.g_man.add();
         self.grid_pos.put(gi,p);
         self.tiles.put(gi,t);
-        self.ls_tiles.push(gi);
     }
 
     pub fn drop(&mut self,gi:GenItem){
@@ -67,11 +61,6 @@ impl State{
         self.grid_pos.drop(gi);
         self.tiles.drop(gi);
         self.draw.drop(gi);
-
-        //Indexes
-        self.ls_tiles.retain(|&x| x!= gi);
-
-
     }
 }
 

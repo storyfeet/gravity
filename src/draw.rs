@@ -13,10 +13,10 @@ use std::cmp::Ordering;
 pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
 	where F: gfx_core::factory::Factory<gfx_device_gl::Resources>
 {
-    for gi in &s.ls_tiles{
-        let Position{x,y} = s.grid_pos.get(*gi)?;
+    for (gi,t) in s.tiles.iter(){
+        let Position{x,y} = s.grid_pos.get(gi)?;
         let r = [(*x as f64) * 50.,*y as f64 * 50.,50.,50.];
-        let (r,mode,z) = match s.tiles.get(*gi)?{
+        let (r,mode,z) = match s.tiles.get(gi)?{
             Tile::Editor=>{
 				match s.tex_map.load(fac,"assets/cursor.png"){
 					Ok(t_loc)=> ([r[0]+10.,r[1]+10.,r[2] - 20.,r[3]-20.],
@@ -34,7 +34,7 @@ pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
             Tile::Block=>(r,DrawMode::Rect([0.,0.,1.,1.]),1),
             Tile::Door(_)=>(r,DrawMode::Rect([0.5,0.5,0.5,1.]),0)
         };
-        s.draw.put(*gi,DrawCp{r,mode,z});
+        s.draw.put(gi,DrawCp{r,mode,z});
     }
     Some(())
 }
@@ -54,6 +54,7 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
         return Ordering::Equal;
     });
     let border = Border{color:[0.,0.,0.,1.],radius:2.};
+
     for gi in ls_draw {
         if let Some(dc)=s.draw.get(gi){
             match dc.mode{
