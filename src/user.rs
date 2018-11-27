@@ -82,6 +82,9 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Option<()>{
             s.add_tile(Tile::Editor,Position{x:0,y:0});
             return Some(());
         }
+        Keyboard(Key::G)=>{
+            s.gravity = (s.gravity + 1 )%4;
+        }
         _=>{},
     }
 

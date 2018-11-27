@@ -3,6 +3,7 @@ use piston_window::rectangle::{Rectangle,Border};
 use piston_window::ButtonState;
 use crate::grid::EdgeGrid;
 use crate::texture_loader::TexLoader;
+use crate::rects::UP;
 
 
 pub struct State{
@@ -15,6 +16,7 @@ pub struct State{
 
     //Useful Data
     pub walls:EdgeGrid,
+    pub gravity:usize,
     pub d_time:f64,
     pub btn_ctrl:ButtonState,
     pub btn_shift:ButtonState,
@@ -34,6 +36,7 @@ impl State{
 
             //useful Data
             walls:EdgeGrid::new(3,3),
+            gravity:UP,
             d_time:0.0,
             btn_ctrl:ButtonState::Release,
             btn_shift:ButtonState::Release,
@@ -77,13 +80,13 @@ pub enum Tile{
 
 
 pub struct DrawCp{
-    pub r:[f64;4],//position x,y,w,h
     pub z:u8,
+    pub rect:[f64;4],
     pub mode:DrawMode,
 }
 
 pub enum DrawMode{
-    Rect([f32;4]),
-	Tex(usize),
+    Rect(Rectangle),//pist_rect
+	Tex(usize,usize)//tex_ref, angle
 }
 

@@ -6,6 +6,7 @@ mod draw;
 //mod mover;
 mod user;
 mod grid;
+mod rects;
 mod texture_loader;
 
 fn main() {

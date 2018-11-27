@@ -1,9 +1,5 @@
 use crate::state::Position;
 
-pub const UP:usize = 0;
-pub const LEFT:usize = 1;
-pub const DOWN:usize = 2;
-pub const RIGHT:usize = 3;
 
 pub type TileEdge = [Edge;4];
 

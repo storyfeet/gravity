@@ -1,13 +1,14 @@
 use crate::state::{State,Position,Tile,DrawMode,DrawCp};
 use crate::grid::{Edge,LEFT,UP,RIGHT,DOWN};
 use crate::ecs::gen::GenItem;
+use crate::rects::{shrink_by,set_pos_angle,rot_about};
 
 use piston_window::rectangle::{Rectangle,Border};
 use piston_window::{Context,G2d,draw_state,line,Transformed};
 use std::cmp::Ordering;
 //use graphics::transformed::Transformed;
 
-
+const COL_BAD:[f32;4]= [0.9,0.1,0.1,1.];
 
 
 pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
@@ -16,31 +17,26 @@ pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
     for (gi,t) in s.tiles.iter(){
         let Position{x,y} = s.grid_pos.get(gi)?;
         let r = [(*x as f64) * 50.,*y as f64 * 50.,50.,50.];
-        let (r,mode,z) = match s.tiles.get(gi)?{
+        let (z,rect,mode) = match s.tiles.get(gi)?{
             Tile::Editor=>{
 				match s.tex_map.load(fac,"assets/cursor.png"){
-					Ok(t_loc)=> ([r[0]+10.,r[1]+10.,r[2] - 20.,r[3]-20.],
-								 DrawMode::Tex(t_loc),6),
-					Err(_)=>([r[0]+10.,r[1]+10.,r[2] - 20.,r[3]-20.],
-								 DrawMode::Rect([1.,0.,0.,1.]),6),
-
+					Ok(t_loc)=> (6,shrink_by(r,10.),DrawMode::Tex(t_loc,UP)),
+					Err(_)=>(6,shrink_by(r,20.), DrawMode::Rect(Rectangle::new(COL_BAD))),
 				}
 			},
             Tile::Man=>
 				match s.tex_map.load(fac,"assets/man.png"){
-					Ok(t_loc)=> (r, DrawMode::Tex(t_loc),6),
-					Err(_)=>(r, DrawMode::Rect([1.,0.,0.,1.]),6),
+					Ok(t_loc)=> (5,r, DrawMode::Tex(t_loc,s.gravity)),
+					Err(_)=>(5,r, DrawMode::Rect(Rectangle::new([1.,0.,0.,1.]))),
 				}
-            Tile::Block=>(r,DrawMode::Rect([0.,0.,1.,1.]),1),
+            Tile::Block=>(4,r,DrawMode::Rect(Rectangle::new([0.,0.,1.,1.]))),
             //Tile::Door(_)=>(r,DrawMode::Rect([0.5,0.5,0.5,1.]),0)
         };
-        s.draw.put(gi,DrawCp{r,mode,z});
+        s.draw.put(gi,DrawCp{z,mode,rect});
     }
     Some(())
 }
 
-//For now the z sort happens here. I'd like to optimize to it only happens on a change, but not
-//biggie
 pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
     let mut ls_draw:Vec<GenItem> = s.draw.iter().map(|(g,_)|g.clone()).collect();
 
@@ -58,30 +54,16 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
     for gi in ls_draw {
         if let Some(dc)=s.draw.get(gi){
             match dc.mode{
-                DrawMode::Rect(col)=> Rectangle::new(col)
-                        .border(border)
-                        .draw(dc.r, &draw_state::DrawState::new_alpha(),
+                DrawMode::Rect(rc)=> rc.draw(dc.rect, &draw_state::DrawState::new_alpha(),
                               c.transform,g),
-				DrawMode::Tex(t_loc)=>{
+				DrawMode::Tex(t_loc,t_ang)=>{
 					if let Some(tx) = s.tex_map.get(t_loc){
-						piston_window::image(tx,c.transform.trans(dc.r[0],dc.r[1]),g);
+						piston_window::image(tx,set_pos_angle(c.transform,dc.rect,t_ang),g);
 					}
 				}
             }
         }
     }
-}
-
-pub fn _rot_about(x:f64,y:f64,cx:f64,cy:f64,ang:usize)->(f64,f64){
-    //Assume UP to start;
-    let (x,y) = (x-cx,y-cy);
-    let (x,y) = match ang {
-        LEFT=>(y,-x),
-        DOWN=>(-x,-y),
-        RIGHT=>(-y,x),
-        _=>(x,y),
-    };
-    (x+cx,y+cy)
 }
 
 pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
@@ -99,8 +81,8 @@ pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
         let (cx,cy) = ((x+0.5)*50.,(y+0.5)*50.);
 
         for dr in 0..4{
-            let (dx1,dy1) = _rot_about(x1,y1,cx,cy,dr);
-            let (dx2,dy2) = _rot_about(x2,y2,cx,cy,dr);
+            let (dx1,dy1) = rot_about(x1,y1,cx,cy,dr);
+            let (dx2,dy2) = rot_about(x2,y2,cx,cy,dr);
 
             match w[dr]{
                 Edge::Wall=>{
