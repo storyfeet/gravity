@@ -1,18 +1,34 @@
 use crate::state::{State,Position,Tile,DrawMode,DrawCp};
 use crate::grid::{Wall,LEFT,UP,RIGHT,DOWN};
 use piston_window::rectangle::{Rectangle,Border};
-use piston_window::{Context,G2d,draw_state,line};
+use piston_window::{Context,G2d,draw_state,line,Transformed};
 use std::cmp::Ordering;
+//use graphics::transformed::Transformed;
 
 
-pub fn tile_to_draw_sys(s:&mut State)->Option<()>{
+
+
+pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
+	where F: gfx_core::factory::Factory<gfx_device_gl::Resources>
+{
     for gi in &s.ls_tiles{
         let Position{x,y} = s.grid_pos.get(*gi)?;
         let r = [(*x as f64) * 50.,*y as f64 * 50.,50.,50.];
         let (r,mode,z) = match s.tiles.get(*gi)?{
-            Tile::Editor=>([r[0]+10.,r[1]+10.,r[2] - 20.,r[3]-20.],
-                         DrawMode::Rect([1.,1.,1.,1.]),6),
-            Tile::Man=>(r,DrawMode::Rect([0.,1.,1.,1.]),2),
+            Tile::Editor=>{
+				match s.tex_map.load(fac,"assets/cursor.png"){
+					Ok(t_loc)=> ([r[0]+10.,r[1]+10.,r[2] - 20.,r[3]-20.],
+								 DrawMode::Tex(t_loc),6),
+					Err(_)=>([r[0]+10.,r[1]+10.,r[2] - 20.,r[3]-20.],
+								 DrawMode::Rect([1.,0.,0.,1.]),6),
+
+				}
+			},
+            Tile::Man=>
+				match s.tex_map.load(fac,"assets/man.png"){
+					Ok(t_loc)=> (r, DrawMode::Tex(t_loc),6),
+					Err(_)=>(r, DrawMode::Rect([1.,0.,0.,1.]),6),
+				}
             Tile::Block=>(r,DrawMode::Rect([0.,0.,1.,1.]),1),
             Tile::Door(_)=>(r,DrawMode::Rect([0.5,0.5,0.5,1.]),0)
         };
@@ -46,6 +62,11 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
                         .border(border)
                         .draw(dc.r, &draw_state::DrawState::new_alpha(),
                               c.transform,g),
+				DrawMode::Tex(t_loc)=>{
+					if let Some(tx) = s.tex_map.get(t_loc){
+						piston_window::image(tx,c.transform.trans(dc.r[0],dc.r[1]),g);
+					}
+				}
             }
         }
     }

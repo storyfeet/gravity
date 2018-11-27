@@ -6,6 +6,7 @@ mod draw;
 //mod mover;
 mod user;
 mod grid;
+mod texture_loader;
 
 fn main() {
 
@@ -21,6 +22,9 @@ fn main() {
                     .exit_on_esc(true)
                     .build()
                     .unwrap();
+
+
+
     while let Some(e) = window.next(){        
 
         window.draw_2d(&e,|c,g|{
@@ -35,7 +39,7 @@ fn main() {
             
             Event::Loop(Loop::Update(d))=>{
                 //mover::move_sys(&mut g_state,d.dt);
-                draw::tile_to_draw_sys(&mut g_state);
+                draw::tile_to_draw_sys(&mut g_state,&mut window.factory);
             },
             _=>{},//println!("OTHER {:?}",e),
         }

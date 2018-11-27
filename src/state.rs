@@ -2,6 +2,7 @@ use crate::ecs::{GenManager,ECVec,GenItem};
 use piston_window::rectangle::{Rectangle,Border};
 use piston_window::ButtonState;
 use crate::grid::WallGrid;
+use crate::texture_loader::TexLoader;
 
 
 pub struct State{
@@ -21,6 +22,8 @@ pub struct State{
     pub p_ref:GenItem,
     pub btn_ctrl:ButtonState,
     pub btn_shift:ButtonState,
+
+    pub tex_map:TexLoader,
 }
 
 impl State{
@@ -44,6 +47,8 @@ impl State{
             p_ref,
             btn_ctrl:ButtonState::Release,
             btn_shift:ButtonState::Release,
+
+            tex_map:TexLoader::new(),
         };
 
         res.grid_pos.put(p_ref,Position{x:0,y:0});
@@ -101,5 +106,6 @@ pub struct DrawCp{
 
 pub enum DrawMode{
     Rect([f32;4]),
+	Tex(usize),
 }
 
