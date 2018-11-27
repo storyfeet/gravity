@@ -6,10 +6,10 @@ use crate::grid::{EdgeGrid,UP,DOWN,LEFT,RIGHT};
 
 use std::ops::{Sub,SubAssign};
 
-fn toggle_tile(s:&mut State,tp:Position)->Option<()>{
+fn toggle_tile(s:&mut State,tp:Position,skip:GenItem)->Option<()>{
     let mut found:Option<GenItem> = None;
     for (gi,p) in s.grid_pos.iter() {
-        if gi == s.p_ref{ continue} 
+        if gi == skip{ continue} 
         if *p == tp {
             found = Some(gi);
             break;
@@ -19,7 +19,7 @@ fn toggle_tile(s:&mut State,tp:Position)->Option<()>{
         None=>s.add_tile(Tile::Man,tp),
         Some(gi)=>{
             match *s.tiles.get(gi)? {
-                Tile::Man=>*s.tiles.get_mut(gi)? = Tile::Door(1),
+                Tile::Man=>*s.tiles.get_mut(gi)? = Tile::Block,
                 _=>s.drop(gi),
             };
         },
@@ -71,24 +71,42 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Option<()>{
         }
         return Some(())
     }
+
+    //Stuff that doesn't need an editor
+    match k.button {
+        Keyboard(Key::E)=>{
+            if let Some((ed_ref,_)) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor){
+                s.drop(ed_ref);
+                return Some(());
+            }
+            s.add_tile(Tile::Editor,Position{x:0,y:0});
+            return Some(());
+        }
+        _=>{},
+    }
+
+
+    //If Editor Exists
+    let (ed_ref,_) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor)?;
+
     if s.btn_ctrl == ButtonState::Press{
         match k.button {
-            Keyboard(Key::Left)=>s.walls.toggle_wall(*s.grid_pos.get(s.p_ref)?,LEFT),
-            Keyboard(Key::Right)=>s.walls.toggle_wall(*s.grid_pos.get(s.p_ref)?,RIGHT),
-            Keyboard(Key::Up)=>s.walls.toggle_wall(*s.grid_pos.get(s.p_ref)?,UP),
-            Keyboard(Key::Down)=>s.walls.toggle_wall(*s.grid_pos.get(s.p_ref)?,DOWN),
+            Keyboard(Key::Left)=>s.walls.toggle_wall(*s.grid_pos.get(ed_ref)?,LEFT),
+            Keyboard(Key::Right)=>s.walls.toggle_wall(*s.grid_pos.get(ed_ref)?,RIGHT),
+            Keyboard(Key::Up)=>s.walls.toggle_wall(*s.grid_pos.get(ed_ref)?,UP),
+            Keyboard(Key::Down)=>s.walls.toggle_wall(*s.grid_pos.get(ed_ref)?,DOWN),
             _=>{},
         }
         return Some(())
     }
     match k.button{
-        Keyboard(Key::Left)=> _dec_ip(&mut s.grid_pos.get_mut(s.p_ref)?.x ,1),
-        Keyboard(Key::Right)=> s.grid_pos.get_mut(s.p_ref)?.x +=1,
-        Keyboard(Key::Up)=> _dec_ip(&mut s.grid_pos.get_mut(s.p_ref)?.y,1),
-        Keyboard(Key::Down)=> s.grid_pos.get_mut(s.p_ref)?.y +=1,
+        Keyboard(Key::Left)=> _dec_ip(&mut s.grid_pos.get_mut(ed_ref)?.x ,1),
+        Keyboard(Key::Right)=> s.grid_pos.get_mut(ed_ref)?.x +=1,
+        Keyboard(Key::Up)=> _dec_ip(&mut s.grid_pos.get_mut(ed_ref)?.y,1),
+        Keyboard(Key::Down)=> s.grid_pos.get_mut(ed_ref)?.y +=1,
         Keyboard(Key::Space)=> {
-            let p = *s.grid_pos.get(s.p_ref)?;
-            toggle_tile(s,p);
+            let p = *s.grid_pos.get(ed_ref)?;
+            toggle_tile(s,p,ed_ref);
         }
         _=>{},
     }

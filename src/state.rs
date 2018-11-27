@@ -16,7 +16,6 @@ pub struct State{
     //Useful Data
     pub walls:EdgeGrid,
     pub d_time:f64,
-    pub p_ref:GenItem,
     pub btn_ctrl:ButtonState,
     pub btn_shift:ButtonState,
 
@@ -25,11 +24,9 @@ pub struct State{
 
 impl State{
     pub fn new()->Self{
-        let mut g_man = GenManager::new();
-        let p_ref = g_man.add();
-        let mut res = State{
+        State{
             //Gen Controlled
-            g_man,
+            g_man:GenManager::new(),
             grid_pos:ECVec::new(),
             tiles:ECVec::new(),
             draw:ECVec::new(), 
@@ -38,16 +35,11 @@ impl State{
             //useful Data
             walls:EdgeGrid::new(3,3),
             d_time:0.0,
-            p_ref,
             btn_ctrl:ButtonState::Release,
             btn_shift:ButtonState::Release,
 
             tex_map:TexLoader::new(),
-        };
-
-        res.grid_pos.put(p_ref,Position{x:0,y:0});
-        res.tiles.put(p_ref,Tile::Editor);
-        res
+        }
     }
 
     pub fn add_tile(&mut self,t:Tile,p:Position){
@@ -76,11 +68,11 @@ impl Position{
     }
 }
 
+#[derive(PartialEq,Debug)]
 pub enum Tile{
     Editor,
     Man,
     Block,
-    Door(u8),
 }
 
 

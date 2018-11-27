@@ -32,7 +32,7 @@ pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
 					Err(_)=>(r, DrawMode::Rect([1.,0.,0.,1.]),6),
 				}
             Tile::Block=>(r,DrawMode::Rect([0.,0.,1.,1.]),1),
-            Tile::Door(_)=>(r,DrawMode::Rect([0.5,0.5,0.5,1.]),0)
+            //Tile::Door(_)=>(r,DrawMode::Rect([0.5,0.5,0.5,1.]),0)
         };
         s.draw.put(gi,DrawCp{r,mode,z});
     }
