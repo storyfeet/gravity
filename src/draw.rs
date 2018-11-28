@@ -74,8 +74,8 @@ pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
                     &draw_state::DrawState::new_alpha(),
                     c.transform,g);
     for (i,w) in s.walls.v.iter().enumerate() {
-        let x = (i % s.walls.w) as f64;
-        let y = (i / s.walls.w) as f64;
+        let x = (i as i32 % s.walls.w) as f64;
+        let y = (i as i32 / s.walls.w) as f64;
         let (x1,y1) = (x*50.,y*50.);
         let (x2,y2) = ((x+1.)*50.,y*50.);
         let (cx,cy) = ((x+0.5)*50.,(y+0.5)*50.);

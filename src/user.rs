@@ -73,7 +73,7 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             Keyboard(Key::Down)=>s.walls = EdgeGrid::new(sw,sh+1),
             _=>{},
         }
-        return Some(())
+        return Ok(())
     }
 
     //Stuff that doesn't need an editor
@@ -81,10 +81,10 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
         Keyboard(Key::E)=>{
             if let Some((ed_ref,_)) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor){
                 s.drop(ed_ref);
-                return Some(());
+                return Ok(());
             }
             s.add_tile(Tile::Editor,Position{x:0,y:0});
-            return Some(());
+            return Ok(());
         }
         Keyboard(Key::G)=>{
             s.gravity = (s.gravity + 1 )%4;
@@ -94,8 +94,8 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
 
 
     //If Editor Exists
-    let (ed_ref,_) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor)?;
-    let ed_pos = *s.grid_pos.get(ed_ref).ok_or("Editor Has No Position")?;
+    let (ed_ref,_) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor).ok_or("no editor")?;
+    let ed_pos = *s.grid_pos.get(ed_ref).unwrap_or(&Position::new(0,0));
 
     if s.btn_ctrl == ButtonState::Press{
         match k.button {
@@ -105,18 +105,16 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             Keyboard(Key::Down)=>s.walls.toggle_wall(ed_pos,DOWN)?,
             _=>{},
         }
-        return Some(())
+        return Ok(())
     }
     match k.button{
-        Keyboard(Key::Left)=> _dec_ip(&mut s.grid_pos.get_mut(ed_ref)?.x ,1),
-        Keyboard(Key::Right)=> s.grid_pos.get_mut(ed_ref)?.x +=1,
-        Keyboard(Key::Up)=> _dec_ip(&mut s.grid_pos.get_mut(ed_ref)?.y,1),
-        Keyboard(Key::Down)=> s.grid_pos.get_mut(ed_ref)?.y +=1,
-        Keyboard(Key::Space)=> {
-            let p = *s.grid_pos.get(ed_ref)?;
-            toggle_tile(s,p,ed_ref);
-        }
+        Keyboard(Key::Left)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(-1,0)),
+        Keyboard(Key::Right)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(1,0)),
+        Keyboard(Key::Up)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(0,-1)),
+        Keyboard(Key::Down)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(0,1)),
+        Keyboard(Key::Space)=> toggle_tile(s,ed_pos,ed_ref),
+        
         _=>{},
     }
-    Some(())
+    Ok(())
 }

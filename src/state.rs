@@ -87,6 +87,7 @@ pub enum DrawMode{
 	Tex(usize,usize)//tex_ref, angle
 }
 
+#[derive(Copy,Clone)]
 pub struct GravCp{
-    priority:usize,
+    pub priority:usize,
 }
