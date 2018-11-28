@@ -46,9 +46,9 @@ pub fn rot_about(x:f64,y:f64,cx:f64,cy:f64,ang:usize)->(f64,f64){
     //Assume UP to start;
     let (x,y) = (x-cx,y-cy);
     let (x,y) = match ang {
-        LEFT=>(-y,x),
+        LEFT=>(y,-x),
         DOWN=>(-x,-y),
-        RIGHT=>(y,-x),
+        RIGHT=>(-y,x),
         _=>(x,y),
     };
     (x+cx,y+cy)

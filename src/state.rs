@@ -20,7 +20,7 @@ pub struct State{
     //Useful Data
     pub walls:EdgeGrid,
     pub gravity:usize,
-    pub grav_processing:bool,
+    pub gravity_processing:bool,
     pub d_time:f64,
     pub btn_ctrl:ButtonState,
     pub btn_shift:ButtonState,
@@ -42,7 +42,7 @@ impl State{
             //useful Data
             walls:EdgeGrid::new(3,3),
             gravity:UP,
-            grav_processing:false,
+            gravity_processing:false,
             d_time:0.0,
             btn_ctrl:ButtonState::Release,
             btn_shift:ButtonState::Release,

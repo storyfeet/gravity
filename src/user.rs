@@ -86,9 +86,9 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             s.add_tile(Tile::Editor,Position{x:0,y:0});
             return Ok(());
         }
-        Keyboard(Key::G)=>{
-            s.gravity = (s.gravity + 1 )%4;
-        }
+        Keyboard(Key::G)=> s.gravity = (s.gravity + 1 )%4,
+        Keyboard(Key::H)=> s.gravity_processing= true,
+        
         _=>{},
     }
 

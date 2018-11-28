@@ -38,6 +38,7 @@ fn main() {
             
             Event::Loop(Loop::Update(d))=>{
                 //mover::move_sys(&mut g_state,d.dt);
+                gravity::gravity_sys(&mut g_state);
                 draw::tile_to_draw_sys(&mut g_state,&mut window.factory);
             },
             _=>{},//println!("OTHER {:?}",e),
