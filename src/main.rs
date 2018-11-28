@@ -8,15 +8,13 @@ mod user;
 mod grid;
 mod rects;
 mod texture_loader;
+mod gravity;
+mod error;
 
 fn main() {
 
     let mut g_state = state::State::new();
 
-    g_state.add_tile(state::Tile::Man,state::Position{x:2,y:4});
-    g_state.add_tile(state::Tile::Block,state::Position{x:3,y:4});
-
-    
 
     let mut window:PistonWindow = 
         WindowSettings::new("Gravity",[640,480])

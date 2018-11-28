@@ -1,8 +1,10 @@
-use crate::state::Position;
+use crate::rects::Position;
+use crate::error::GravError;
 
 
 pub type TileEdge = [Edge;4];
 
+#[derive(Copy,Clone,Debug,PartialEq)]
 pub enum Edge{
     Clear,
     Wall,
@@ -26,14 +28,27 @@ impl EdgeGrid{
         EdgeGrid{w,h,v}
     }
 
-    pub fn toggle_wall(&mut self, p:Position,dir:usize){
-        let (x,y) =( p.x as usize, p.y as usize);
-        if x >= self.w { return }
-        if y >= self.h { return }
-        let n = x + y* self.w;
-        if n >= self.v.len() {return}
-        if dir >3 {return}
-        self.v[n][dir] = match self.v[n][dir]{
+    pub fn pos_to_n(&self,p:Position)->Option<usize>{
+        if p.x < 0 { return None}
+        if p.y < 0 { return None}
+        if p.x >= self.w { return None }
+        if p.y >= self.h { return None }
+        let res = p.x + p.y * self.w;
+        if res > self.v.len() { return None}
+        return res;
+    }
+
+    pub fn at(&self,p:Position,dir:usize)->Option<Edge>{
+        Some(self.v[self.pos_to_n(p)?][dir%4])
+    }
+
+    pub fn at_mut(&mut self,p:Position,dir:usize)->Option<&mut Edge>{
+        Some(&mut self.v[self.pos_to_n(p)?][dir%4])
+    }
+
+    pub fn toggle_wall(&mut self, p:Position,dir:usize)->Result<(),GravError>{
+        let edge = self.at_mut(p,dir)?;
+        *edge = match *edge{
             Edge::Clear=>Edge::Wall,
             Edge::Wall=>Edge::Spike,
             Edge::Spike=>Edge::Door,

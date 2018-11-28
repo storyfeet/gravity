@@ -1,12 +1,14 @@
 use piston_window::{ButtonArgs,keyboard::Key,Button,ButtonState};
-use crate::state::{State,Tile,Position};
+use crate::state::{State,Tile,GravCp};
 use crate::ecs::{GenItem};
 use self::Button::*;
-use crate::grid::{EdgeGrid,UP,DOWN,LEFT,RIGHT};
+use crate::grid::{EdgeGrid};
+use crate::rects::{Position,UP,DOWN,LEFT,RIGHT};
+use crate::error::GravError;
 
 use std::ops::{Sub,SubAssign};
 
-fn toggle_tile(s:&mut State,tp:Position,skip:GenItem)->Option<()>{
+fn toggle_tile(s:&mut State,tp:Position,skip:GenItem){
     let mut found:Option<GenItem> = None;
     for (gi,p) in s.grid_pos.iter() {
         if gi == skip{ continue} 
@@ -16,15 +18,17 @@ fn toggle_tile(s:&mut State,tp:Position,skip:GenItem)->Option<()>{
         }
     }
     match found{ 
-        None=>s.add_tile(Tile::Man,tp),
+        None=>{
+            let gi = s.add_tile(Tile::Man,tp);
+            s.gravs.put(gi,GravCp{priority:1});
+        },
         Some(gi)=>{
-            match *s.tiles.get(gi)? {
-                Tile::Man=>*s.tiles.get_mut(gi)? = Tile::Block,
+            match s.tiles.get(gi) {
+                Some(Tile::Man)=>s.tiles.put(gi,Tile::Block),//TODO consider gravity
                 _=>s.drop(gi),
             };
         },
     };
-    Some(())
 }
 
 
@@ -45,14 +49,14 @@ fn _dec_ip<T:PartialOrd + SubAssign+Copy>(v:&mut T,n:T){
 }
 
 
-pub fn key_sys(s:&mut State,k:ButtonArgs)->Option<()>{
+pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
     if k.state != ButtonState::Press{
         match k.button {
             Keyboard(Key::LCtrl)=>s.btn_ctrl = ButtonState::Release,
             Keyboard(Key::LShift)=>s.btn_shift = ButtonState::Release,
             _=>{},
         }
-        return None//consider Some here
+        return Ok(())
     }
     match k.button{
         Keyboard(Key::LCtrl)=>s.btn_ctrl = ButtonState::Press,
@@ -91,13 +95,14 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Option<()>{
 
     //If Editor Exists
     let (ed_ref,_) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor)?;
+    let ed_pos = *s.grid_pos.get(ed_ref).ok_or("Editor Has No Position")?;
 
     if s.btn_ctrl == ButtonState::Press{
         match k.button {
-            Keyboard(Key::Left)=>s.walls.toggle_wall(*s.grid_pos.get(ed_ref)?,LEFT),
-            Keyboard(Key::Right)=>s.walls.toggle_wall(*s.grid_pos.get(ed_ref)?,RIGHT),
-            Keyboard(Key::Up)=>s.walls.toggle_wall(*s.grid_pos.get(ed_ref)?,UP),
-            Keyboard(Key::Down)=>s.walls.toggle_wall(*s.grid_pos.get(ed_ref)?,DOWN),
+            Keyboard(Key::Left)=>s.walls.toggle_wall(ed_pos,LEFT)?,
+            Keyboard(Key::Right)=>s.walls.toggle_wall(ed_pos,RIGHT)?,
+            Keyboard(Key::Up)=>s.walls.toggle_wall(ed_pos,UP)?,
+            Keyboard(Key::Down)=>s.walls.toggle_wall(ed_pos,DOWN)?,
             _=>{},
         }
         return Some(())

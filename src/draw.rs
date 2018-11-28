@@ -1,7 +1,7 @@
-use crate::state::{State,Position,Tile,DrawMode,DrawCp};
-use crate::grid::{Edge,LEFT,UP,RIGHT,DOWN};
+use crate::state::{State,Tile,DrawMode,DrawCp};
+use crate::grid::{Edge};
 use crate::ecs::gen::GenItem;
-use crate::rects::{shrink_by,set_pos_angle,rot_about};
+use crate::rects::{Position,UP,DOWN,LEFT,RIGHT,shrink_by,set_pos_angle,rot_about};
 
 use piston_window::rectangle::{Rectangle,Border};
 use piston_window::{Context,G2d,draw_state,line,Transformed};
