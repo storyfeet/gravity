@@ -1,5 +1,5 @@
 use piston_window::{ButtonArgs,keyboard::Key,Button,ButtonState};
-use crate::state::{State,Tile,GravCp,PlayMode};
+use crate::state::{State,Tile,GravCp,PlayMode,MoveAction};
 use crate::ecs::{GenItem};
 use self::Button::*;
 use crate::grid::{EdgeGrid};
@@ -94,27 +94,56 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
 
 
     //If Editor Exists
-    let (ed_ref,_) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor).ok_or("no editor")?;
-    let ed_pos = *s.grid_pos.get(ed_ref).unwrap_or(&Position::new(0,0));
+    if let Some((ed_ref,_)) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor){
+        let ed_pos = *s.grid_pos.get(ed_ref).unwrap_or(&Position::new(0,0));
 
-    if s.btn_ctrl == ButtonState::Press{
-        match k.button {
-            Keyboard(Key::Left)=>s.walls.toggle_wall(ed_pos,LEFT)?,
-            Keyboard(Key::Right)=>s.walls.toggle_wall(ed_pos,RIGHT)?,
-            Keyboard(Key::Up)=>s.walls.toggle_wall(ed_pos,UP)?,
-            Keyboard(Key::Down)=>s.walls.toggle_wall(ed_pos,DOWN)?,
+        if s.btn_ctrl == ButtonState::Press{
+            match k.button {
+                Keyboard(Key::Left)=>s.walls.toggle_wall(ed_pos,LEFT)?,
+                Keyboard(Key::Right)=>s.walls.toggle_wall(ed_pos,RIGHT)?,
+                Keyboard(Key::Up)=>s.walls.toggle_wall(ed_pos,UP)?,
+                Keyboard(Key::Down)=>s.walls.toggle_wall(ed_pos,DOWN)?,
+                _=>{},
+            }
+            return Ok(())
+        }
+        match k.button{
+            Keyboard(Key::Left)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(-1,0)),
+            Keyboard(Key::Right)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(1,0)),
+            Keyboard(Key::Up)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(0,-1)),
+            Keyboard(Key::Down)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(0,1)),
+            Keyboard(Key::Space)=> toggle_tile(s,ed_pos,ed_ref),
+            
             _=>{},
         }
-        return Ok(())
+        return Ok(());
     }
-    match k.button{
-        Keyboard(Key::Left)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(-1,0)),
-        Keyboard(Key::Right)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(1,0)),
-        Keyboard(Key::Up)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(0,-1)),
-        Keyboard(Key::Down)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(0,1)),
-        Keyboard(Key::Space)=> toggle_tile(s,ed_pos,ed_ref),
-        
+
+    //Normal Movement
+    if s.p_mode != PlayMode::Wait {
+        return Ok(());
+    }
+    match k.button {
+        Keyboard(Key::Left)=>s.p_mode = PlayMode::Move( 
+            if s.btn_ctrl == ButtonState::Press{ 
+                MoveAction::LfFar
+            }else if s.btn_shift == ButtonState::Press{
+                MoveAction::LfUp
+            }else {
+                MoveAction::Lf
+            }
+        ),        
+        Keyboard(Key::Right)=>s.p_mode = PlayMode::Move( 
+            if s.btn_ctrl == ButtonState::Press{ 
+                MoveAction::RtFar
+            }else if s.btn_shift == ButtonState::Press{
+                MoveAction::RtUp
+            }else {
+                MoveAction::Rt
+            }
+        ),        
         _=>{},
+
     }
     Ok(())
 }

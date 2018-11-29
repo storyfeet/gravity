@@ -6,7 +6,8 @@ use crate::grid::Edge;
 
 pub fn gravity_sys(s:&mut State){
     if s.p_mode != PlayMode::Grav{return}
-    s.p_mode = PlayMode::Play;
+
+    s.p_mode = PlayMode::Wait;
 
     let mut v=Vec::new();
     

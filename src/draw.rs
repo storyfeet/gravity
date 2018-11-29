@@ -48,7 +48,6 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
         println!("Sort - Get Fail");
         return Ordering::Equal;
     });
-    let border = Border{color:[0.,0.,0.,1.],radius:2.};
 
     for gi in ls_draw {
         if let Some(dc)=s.draw.get(gi){
@@ -103,5 +102,4 @@ pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
             }
         }
     }
-
 }

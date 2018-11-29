@@ -1,9 +1,9 @@
-use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,draw_state,Input};
+use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,Input};
 
 mod ecs;
 mod state;
 mod draw;
-//mod mover;
+mod mover;
 mod user;
 mod grid;
 mod rects;
@@ -43,8 +43,10 @@ fn main() {
             }
             
             Event::Loop(Loop::Update(d))=>{
-                //mover::move_sys(&mut g_state,d.dt);
-                gravity::gravity_sys(&mut g_state);
+                if mover::timer_sys(&mut g_state,d.dt) {
+                    gravity::gravity_sys(&mut g_state);
+                    mover::move_sys(&mut g_state);
+                }
                 draw::tile_to_draw_sys(&mut g_state);
             },
             _=>{},//println!("OTHER {:?}",e),

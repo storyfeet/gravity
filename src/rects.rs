@@ -21,7 +21,18 @@ impl Position{
     pub fn new(x:i32,y:i32)->Self{
         Position{x,y}
     }
+
+    pub fn from_dir(d:usize)->Self{
+        match d%4{
+            UP=>Position::new(0,-1),
+            RIGHT=>Position::new(1,0),
+            DOWN=>Position::new(0,1),
+            _=>Position::new(-1,0),
+        }
+    }
 }
+
+
 
 impl Add for Position{
     type Output = Position;
@@ -30,13 +41,9 @@ impl Add for Position{
     }
 }
 
+//DEPRECATING in favor of Position::from_dir
 pub fn dir_as_pos(u:usize)->Position{
-    match u%4{
-        UP=>Position::new(0,-1),
-        RIGHT=>Position::new(1,0),
-        DOWN=>Position::new(0,1),
-        _=>Position::new(-1,0),
-    }
+    Position::from_dir(u)
 }
 
 

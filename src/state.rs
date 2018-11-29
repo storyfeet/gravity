@@ -1,5 +1,5 @@
 use crate::ecs::{GenManager,ECVec,GenItem};
-use piston_window::rectangle::{Rectangle,Border};
+use piston_window::rectangle::{Rectangle};
 use piston_window::ButtonState;
 use crate::grid::EdgeGrid;
 use crate::texture_loader::TexLoader;
@@ -42,7 +42,7 @@ impl State{
             //useful Data
             walls:EdgeGrid::new(3,3),
             gravity:UP,
-            p_mode:PlayMode::Play,
+            p_mode:PlayMode::Wait,
             d_time:0.0,
             btn_ctrl:ButtonState::Release,
             btn_shift:ButtonState::Release,
@@ -94,8 +94,14 @@ pub struct GravCp{
 
 #[derive(Copy,Clone,PartialEq,Debug)]
 pub enum PlayMode{
-    Edit,
-    Play,
+    Wait,
     Grav,
-    Move, 
+    Move(MoveAction), 
 }
+
+#[derive(Copy,Clone,PartialEq,Debug)]
+pub enum MoveAction{
+    Lf,Rt,Jmp,LfUp,RtUp,LfFar,RtFar
+}
+
+
