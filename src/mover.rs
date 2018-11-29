@@ -2,11 +2,13 @@ use crate::state::{State,PlayMode,MoveAction,Tile};
 use crate::ecs::GenItem;
 use crate::rects::{Position,LEFT,RIGHT};
 use crate::error::GravError;
+use crate::grid::can_pass;
+
 
 
 pub fn timer_sys(s:&mut State,d:f64)->bool{
     s.d_time += d; 
-    if s.d_time > 0.2 {
+    if s.d_time > 0.1 {
         s.d_time = 0.;
         return true;
     }
@@ -14,40 +16,54 @@ pub fn timer_sys(s:&mut State,d:f64)->bool{
 }
 
 
-fn move_in_dir(s:&mut State,mut ms:Vec<GenItem>,dir:usize)->Result<(),GravError>{
+fn move_in_dir(s:&mut State,mut ms:Vec<GenItem>,dir:usize)->bool{
     let step = Position::from_dir(dir);
-    println!("dir = {}, step = {:?}",dir,step);
+    //println!("dir = {}, step = {:?}",dir,step);
+    let mut res = false;
     loop{
         let mut moved = false;
         let mut ms2 = Vec::new();
         for g in ms{
-            let pos = *s.grid_pos.get(g).ok_or("no gridpos")?;
+            let pos = match s.grid_pos.get(g){
+                Some(s)=>*s,
+                _=>continue,
+            };
+
             let npos = pos + step;
+            if ! can_pass(s.walls.at(pos,dir)){continue}
+            if ! can_pass(s.walls.at(npos,dir+2)){continue}
+
             let mut b_found = false;
-            for (at_gi,at_p)in s.grid_pos.iter(){
-                if *at_p == npos {
-                    match s.tiles.get(at_gi){
-                        Some(Tile::Man)=>{
-                            ms2.push(g);
-                            b_found = true;
-                        }
-                        Some(Tile::Block)=>{
-                            ms2.push(at_gi);
-                            ms2.push(g);
-                            b_found = true;
-                        },
-                        _=>continue,
-                    }
-                }
-            }
-            if !b_found{
+            let bumps = s.grid_pos.iter()
+                        .filter(|(at_gi,at_p)|{
+                            return if **at_p ==npos{
+                                match s.tiles.get(*at_gi){
+                                    Some(Tile::Man)=>{
+                                        b_found = true;
+                                        false
+                                    },
+                                    Some(Tile::Block)=>{
+                                        b_found = true;
+                                        true
+                                    },
+                                    _=>false
+                                }
+                            } else {false};
+                        })
+                        .map(|(g,_)|g).collect();
+
+            moved = move_in_dir(s,bumps,dir) ||moved;
+            if b_found{
+                ms2.push(g);
+            }else{
                 s.grid_pos.put(g,npos);
                 moved = true;
             }
         }
         if !moved{
-            return Ok(());
+            return res;
         }
+        res = true;
         ms = ms2;
     }
 

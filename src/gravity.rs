@@ -1,7 +1,7 @@
 use crate::state::{State,GravCp,PlayMode};
 use crate::rects::{dir_as_pos};
 use crate::ecs::gen::GenItem;
-use crate::grid::Edge;
+use crate::grid::{Edge,can_pass};
 
 
 pub fn gravity_sys(s:&mut State){
@@ -18,10 +18,9 @@ pub fn gravity_sys(s:&mut State){
             None=>continue,
         };
         let npos = pos + dir_as_pos(s.gravity +2);
-        if let Some(Edge::Clear) = s.walls.at(pos,s.gravity+2){
-            if let Some(Edge::Clear) = s.walls.at(npos,s.gravity){
-                v.push((gi,npos));
-            }
+        if can_pass(s.walls.at(pos,s.gravity+2)) 
+                && can_pass(s.walls.at(npos,s.gravity)){
+            v.push((gi,npos));
         }
           
     }

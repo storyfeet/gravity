@@ -12,6 +12,13 @@ pub enum Edge{
     Door,
 }
 
+pub fn can_pass(e_op:Option<Edge>)->bool{
+    match e_op{
+        Some(Edge::Door)|Some(Edge::Clear)=>true,
+        _=>false,
+    }
+}
+
 pub struct EdgeGrid{
     pub w:i32,
     pub h:i32,
