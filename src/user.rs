@@ -1,5 +1,5 @@
 use piston_window::{ButtonArgs,keyboard::Key,Button,ButtonState};
-use crate::state::{State,Tile,GravCp};
+use crate::state::{State,Tile,GravCp,PlayMode};
 use crate::ecs::{GenItem};
 use self::Button::*;
 use crate::grid::{EdgeGrid};
@@ -87,7 +87,7 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             return Ok(());
         }
         Keyboard(Key::G)=> s.gravity = (s.gravity + 1 )%4,
-        Keyboard(Key::H)=> s.gravity_processing= true,
+        Keyboard(Key::H)=> s.p_mode= PlayMode::Grav,
         
         _=>{},
     }

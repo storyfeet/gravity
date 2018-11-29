@@ -22,7 +22,13 @@ fn main() {
                     .build()
                     .unwrap();
 
-
+    println!("Loading");
+    g_state.tex_map.load(&mut window.factory,"assets/door.png").unwrap();
+    g_state.tex_map.load(&mut window.factory,"assets/man.png").unwrap();
+    g_state.tex_map.load(&mut window.factory,"assets/cursor.png").unwrap();
+    g_state.tex_map.load(&mut window.factory,"assets/spike.png").unwrap();
+    g_state.tex_map.load(&mut window.factory,"assets/block.png").unwrap();
+    println!("Loaded");
 
     while let Some(e) = window.next(){        
 
@@ -39,7 +45,7 @@ fn main() {
             Event::Loop(Loop::Update(d))=>{
                 //mover::move_sys(&mut g_state,d.dt);
                 gravity::gravity_sys(&mut g_state);
-                draw::tile_to_draw_sys(&mut g_state,&mut window.factory);
+                draw::tile_to_draw_sys(&mut g_state);
             },
             _=>{},//println!("OTHER {:?}",e),
         }

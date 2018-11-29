@@ -36,6 +36,12 @@ impl TexLoader{
     pub fn get(&self,n:usize)->Option<&G2dTexture>{
         self.v.get(n) 
     }
+
+    pub fn get_by_path(&self,fname:&str)->Option<(usize,&G2dTexture)>{
+        let n = *self.map.get(fname)?;
+        let t = self.v.get(n)?;
+        Some((n,t))
+    }
 }
 
 

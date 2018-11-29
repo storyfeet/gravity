@@ -2,39 +2,38 @@ use crate::state::{State,Tile,DrawMode,DrawCp};
 use crate::grid::{Edge};
 use crate::ecs::gen::GenItem;
 use crate::rects::{Position,UP,DOWN,LEFT,RIGHT,shrink_by,set_pos_angle,rot_about};
+use crate::error::GravError;
 
 use piston_window::rectangle::{Rectangle,Border};
-use piston_window::{Context,G2d,draw_state,line,Transformed};
+use piston_window::{image,Context,G2d,draw_state,line,Transformed};
 use std::cmp::Ordering;
 //use graphics::transformed::Transformed;
 
 const COL_BAD:[f32;4]= [0.9,0.1,0.1,1.];
 
 
-pub fn tile_to_draw_sys<F>(s:&mut State,fac:&mut F)->Option<()>
-	where F: gfx_core::factory::Factory<gfx_device_gl::Resources>
-{
+pub fn tile_to_draw_sys(s:&mut State)->Result<(),GravError>{
+
     for (gi,t) in s.tiles.iter(){
-        let Position{x,y} = s.grid_pos.get(gi)?;
+        let Position{x,y} = s.grid_pos.get(gi).ok_or("Tile has no position")?;
         let r = [(*x as f64) * 50.,*y as f64 * 50.,50.,50.];
-        let (z,rect,mode) = match s.tiles.get(gi)?{
+        let (z,rect,mode) = match t{
             Tile::Editor=>{
-				match s.tex_map.load(fac,"assets/cursor.png"){
-					Ok(t_loc)=> (6,shrink_by(r,10.),DrawMode::Tex(t_loc,UP)),
-					Err(_)=>(6,shrink_by(r,20.), DrawMode::Rect(Rectangle::new(COL_BAD))),
-				}
+                let (t_loc,_) = s.tex_map.get_by_path("assets/cursor.png").ok_or("cursor.png not loaded")?;
+				(6,shrink_by(r,10.),DrawMode::Tex(t_loc,UP))
 			},
-            Tile::Man=>
-				match s.tex_map.load(fac,"assets/man.png"){
-					Ok(t_loc)=> (5,r, DrawMode::Tex(t_loc,s.gravity)),
-					Err(_)=>(5,r, DrawMode::Rect(Rectangle::new([1.,0.,0.,1.]))),
-				}
-            Tile::Block=>(4,r,DrawMode::Rect(Rectangle::new([0.,0.,1.,1.]))),
-            //Tile::Door(_)=>(r,DrawMode::Rect([0.5,0.5,0.5,1.]),0)
+            Tile::Man=>{
+				let (t_loc,_) = s.tex_map.get_by_path("assets/man.png").ok_or("man.png not loaded")?;
+                (5,r, DrawMode::Tex(t_loc,s.gravity))
+            },
+            Tile::Block=>{
+				let (t_loc,_) = s.tex_map.get_by_path("assets/block.png").ok_or("man.png not loaded")?;
+                (5,r, DrawMode::Tex(t_loc,UP))
+            },
         };
         s.draw.put(gi,DrawCp{z,mode,rect});
     }
-    Some(())
+    Ok(())
 }
 
 pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
@@ -58,7 +57,7 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
                               c.transform,g),
 				DrawMode::Tex(t_loc,t_ang)=>{
 					if let Some(tx) = s.tex_map.get(t_loc){
-						piston_window::image(tx,set_pos_angle(c.transform,dc.rect,t_ang),g);
+						image(tx,set_pos_angle(c.transform,dc.rect,t_ang),g);
 					}
 				}
             }
@@ -89,7 +88,16 @@ pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
                     line([0.,0.,1.,1.],2.,[dx1,dy1,dx2,dy2],c.transform,g);
                 }
                 Edge::Spike=>{
-                    line([1.,0.,0.,1.],2.,[dx1,dy1,dx2,dy2],c.transform,g);
+                    if let Some((_,tx)) = 
+                        s.tex_map.get_by_path("assets/spike.png") {
+						image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],dr+2),g);
+                    }
+                }
+                Edge::Door=>{
+                    if let Some((_,tx)) = 
+                        s.tex_map.get_by_path("assets/door.png") {
+						image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],dr+2),g);
+                    }
                 }
                 _=>{},
             }

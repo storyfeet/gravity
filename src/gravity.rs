@@ -1,12 +1,12 @@
-use crate::state::{State,GravCp};
+use crate::state::{State,GravCp,PlayMode};
 use crate::rects::{dir_as_pos};
 use crate::ecs::gen::GenItem;
 use crate::grid::Edge;
 
 
 pub fn gravity_sys(s:&mut State){
-    if ! s.gravity_processing{return}
-    s.gravity_processing = false;
+    if s.p_mode != PlayMode::Grav{return}
+    s.p_mode = PlayMode::Play;
 
     let mut v=Vec::new();
     
@@ -34,7 +34,7 @@ pub fn gravity_sys(s:&mut State){
                 None=>{
                     s.grid_pos.put(gi,npos);
                     moved = true;
-                    s.gravity_processing = true;
+                    s.p_mode = PlayMode::Grav;
                 },
             }
             

@@ -40,7 +40,8 @@ pub fn dir_as_pos(u:usize)->Position{
 }
 
 
-type rect = [f64;4];
+
+type Rect = [f64;4];
 
 pub fn rot_about(x:f64,y:f64,cx:f64,cy:f64,ang:usize)->(f64,f64){
     //Assume UP to start;
@@ -55,12 +56,12 @@ pub fn rot_about(x:f64,y:f64,cx:f64,cy:f64,ang:usize)->(f64,f64){
 }
 
 ///Assumes [x,y,w,h]
-pub fn shrink_by(r:rect,n:f64)->rect{
+pub fn shrink_by(r:Rect,n:f64)->Rect{
     [r[0]+n,r[1]+n,r[2] - (n*2.),r[3] - (n*2.)]
 }
 
 
-pub fn set_pos_angle(ct:[[f64; 3]; 2],r:rect,ang:usize)->[[f64; 3]; 2]{
+pub fn set_pos_angle(ct:[[f64; 3]; 2],r:Rect,ang:usize)->[[f64; 3]; 2]{
     ct
         .trans(r[0],r[1])
         .scale(r[2]/100.,r[3]/100.)

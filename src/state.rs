@@ -20,7 +20,7 @@ pub struct State{
     //Useful Data
     pub walls:EdgeGrid,
     pub gravity:usize,
-    pub gravity_processing:bool,
+    pub p_mode:PlayMode,
     pub d_time:f64,
     pub btn_ctrl:ButtonState,
     pub btn_shift:ButtonState,
@@ -42,7 +42,7 @@ impl State{
             //useful Data
             walls:EdgeGrid::new(3,3),
             gravity:UP,
-            gravity_processing:false,
+            p_mode:PlayMode::Play,
             d_time:0.0,
             btn_ctrl:ButtonState::Release,
             btn_shift:ButtonState::Release,
@@ -90,4 +90,12 @@ pub enum DrawMode{
 #[derive(Copy,Clone)]
 pub struct GravCp{
     pub priority:usize,
+}
+
+#[derive(Copy,Clone,PartialEq,Debug)]
+pub enum PlayMode{
+    Edit,
+    Play,
+    Grav,
+    Move, 
 }
