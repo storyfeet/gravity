@@ -28,6 +28,7 @@ fn main() {
     g_state.tex_map.load(&mut window.factory,"assets/cursor.png").unwrap();
     g_state.tex_map.load(&mut window.factory,"assets/spike.png").unwrap();
     g_state.tex_map.load(&mut window.factory,"assets/block.png").unwrap();
+    g_state.tex_map.load(&mut window.factory,"assets/arrow.png").unwrap();
     println!("Loaded");
 
     while let Some(e) = window.next(){        

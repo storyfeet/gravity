@@ -18,8 +18,8 @@ pub fn gravity_sys(s:&mut State){
             None=>continue,
         };
         let npos = pos + dir_as_pos(s.gravity +2);
-        if can_pass(s.walls.at(pos,s.gravity+2)) 
-                && can_pass(s.walls.at(npos,s.gravity)){
+        if can_pass(s.walls.edge_at(pos,s.gravity+2)) 
+                && can_pass(s.walls.edge_at(npos,s.gravity)){
             v.push((gi,npos));
         }
           

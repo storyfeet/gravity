@@ -86,7 +86,6 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             s.add_tile(Tile::Editor,Position{x:0,y:0});
             return Ok(());
         }
-        Keyboard(Key::G)=> s.gravity = (s.gravity + 1 )%4,
         Keyboard(Key::H)=> s.p_mode= PlayMode::Grav,
         
         _=>{},
@@ -99,10 +98,10 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
 
         if s.btn_ctrl == ButtonState::Press{
             match k.button {
-                Keyboard(Key::Left)=>s.walls.toggle_wall(ed_pos,LEFT)?,
-                Keyboard(Key::Right)=>s.walls.toggle_wall(ed_pos,RIGHT)?,
-                Keyboard(Key::Up)=>s.walls.toggle_wall(ed_pos,UP)?,
-                Keyboard(Key::Down)=>s.walls.toggle_wall(ed_pos,DOWN)?,
+                Keyboard(Key::Left)=>s.walls.toggle_edge(ed_pos,LEFT)?,
+                Keyboard(Key::Right)=>s.walls.toggle_edge(ed_pos,RIGHT)?,
+                Keyboard(Key::Up)=>s.walls.toggle_edge(ed_pos,UP)?,
+                Keyboard(Key::Down)=>s.walls.toggle_edge(ed_pos,DOWN)?,
                 _=>{},
             }
             return Ok(())
@@ -113,6 +112,7 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             Keyboard(Key::Up)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(0,-1)),
             Keyboard(Key::Down)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(0,1)),
             Keyboard(Key::Space)=> toggle_tile(s,ed_pos,ed_ref),
+            Keyboard(Key::G)=> {s.walls.toggle_core(ed_pos);},
             
             _=>{},
         }
@@ -142,6 +142,7 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
                 MoveAction::Rt
             }
         ),        
+        Keyboard(Key::Up)=>s.p_mode = PlayMode::Move(MoveAction::Jmp),
         _=>{},
 
     }

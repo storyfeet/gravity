@@ -40,7 +40,7 @@ impl State{
 
 
             //useful Data
-            walls:EdgeGrid::new(3,3),
+            walls:EdgeGrid::new(10,8),
             gravity:UP,
             p_mode:PlayMode::Wait,
             d_time:0.0,

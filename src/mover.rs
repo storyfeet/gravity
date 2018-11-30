@@ -1,6 +1,6 @@
 use crate::state::{State,PlayMode,MoveAction,Tile};
 use crate::ecs::GenItem;
-use crate::rects::{Position,LEFT,RIGHT};
+use crate::rects::{Position,LEFT,RIGHT,UP};
 use crate::error::GravError;
 use crate::grid::can_pass;
 
@@ -30,8 +30,8 @@ fn move_in_dir(s:&mut State,mut ms:Vec<GenItem>,dir:usize)->bool{
             };
 
             let npos = pos + step;
-            if ! can_pass(s.walls.at(pos,dir)){continue}
-            if ! can_pass(s.walls.at(npos,dir+2)){continue}
+            if ! can_pass(s.walls.edge_at(pos,dir)){continue}
+            if ! can_pass(s.walls.edge_at(npos,dir+2)){continue}
 
             let mut b_found = false;
             let bumps = s.grid_pos.iter()
@@ -82,12 +82,38 @@ pub fn move_sys(s:&mut State){
         MoveAction::Lf=>{
             let dir = LEFT + s.gravity;
             move_in_dir(s,movers,dir);
+            s.p_mode = PlayMode::Grav;
         }
         MoveAction::Rt=>{
             let dir = RIGHT + s.gravity;
             move_in_dir(s,movers,dir);
+            s.p_mode = PlayMode::Grav;
         }
-        _=>{},
+        MoveAction::Jmp=>{
+            let dir = UP + s.gravity;
+            move_in_dir(s,movers,dir);
+            s.p_mode = PlayMode::Grav;
+        }
+        MoveAction::LfUp=>{
+            let dir = UP + s.gravity;
+            move_in_dir(s,movers,dir);
+            s.p_mode = PlayMode::Move(MoveAction::Lf);
+        }
+        MoveAction::RtUp=>{
+            let dir = UP + s.gravity;
+            move_in_dir(s,movers,dir);
+            s.p_mode = PlayMode::Move(MoveAction::Rt);
+        }
+        MoveAction::LfFar=>{
+            let dir = LEFT + s.gravity;
+            move_in_dir(s,movers,dir);
+            s.p_mode = PlayMode::Move(MoveAction::Lf);
+        }
+        MoveAction::RtFar=>{
+            let dir = RIGHT + s.gravity;
+            move_in_dir(s,movers,dir);
+            s.p_mode = PlayMode::Move(MoveAction::Rt);
+        }
     }
-    s.p_mode = PlayMode::Grav;
 }
+

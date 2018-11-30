@@ -1,5 +1,5 @@
 use crate::state::{State,Tile,DrawMode,DrawCp};
-use crate::grid::{Edge};
+use crate::grid::{Edge,TileCore};
 use crate::ecs::gen::GenItem;
 use crate::rects::{Position,UP,DOWN,LEFT,RIGHT,shrink_by,set_pos_angle,rot_about};
 use crate::error::GravError;
@@ -99,6 +99,18 @@ pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
                     }
                 }
                 _=>{},
+            }
+        }
+    }
+
+    for (i,core) in s.walls.vc.iter().enumerate() {
+        let x = (i as i32 % s.walls.w) as f64;
+        let y = (i as i32 / s.walls.w) as f64;
+        let (x1,y1) = (x*50.,y*50.);
+        if let TileCore::GravChanger(dr) = core{
+            if let Some((_,tx)) = 
+                s.tex_map.get_by_path("assets/arrow.png") {
+                image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],*dr),g);
             }
         }
     }
