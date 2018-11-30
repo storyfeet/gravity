@@ -6,6 +6,7 @@ pub struct GenItem{
 }
 
 
+#[derive(Clone,Debug,PartialEq)]
 pub struct GenManager{
     c_gen:u64,
     items:Vec<Option<u64>>,
@@ -42,4 +43,23 @@ impl GenManager{
             }
         }
     }
+
+    pub fn compress(&mut self)->Vec<(GenItem,GenItem)>{
+        let mut v2 = Vec::new();
+        let mut res = Vec::new();
+
+        let mut curr = 0;
+
+        for  (o_loc,o_gen) in self.items.iter().enumerate(){
+            if let Some(o_gen) = o_gen{
+                v2.push(Some(*o_gen));
+                res.push((GenItem{gen:*o_gen,loc:o_loc},
+                            GenItem{gen:*o_gen,loc:curr}));
+                curr += 1;
+            }
+        }
+        self.items = v2;
+        res
+    }
+
 }

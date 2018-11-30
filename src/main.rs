@@ -13,6 +13,8 @@ mod error;
 
 fn main() {
 
+
+
     let mut g_state = state::State::new();
 
 
@@ -47,6 +49,7 @@ fn main() {
                 if mover::timer_sys(&mut g_state,d.dt) {
                     gravity::gravity_sys(&mut g_state);
                     mover::move_sys(&mut g_state);
+                    gravity::gravity_arrow_sys(&mut g_state);
                 }
                 draw::tile_to_draw_sys(&mut g_state);
             },

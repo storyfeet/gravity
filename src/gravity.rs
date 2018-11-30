@@ -1,7 +1,35 @@
-use crate::state::{State,GravCp,PlayMode};
+use crate::state::{State,GravCp,PlayMode,Tile};
 use crate::rects::{dir_as_pos};
 use crate::ecs::gen::GenItem;
-use crate::grid::{Edge,can_pass};
+use crate::grid::{Edge,TileCore,can_pass};
+use crate::error::GravError;
+
+
+pub fn gravity_arrow_sys(s:&mut State)->Result<(),GravError>{
+    
+    let mut lowest_gen:Option<u64> = None;
+    let mut ndir:Option<usize> = None;
+    
+    for (gi,t) in s.tiles.iter().filter(|(_,t)|**t == Tile::Man) {
+        let p = s.grid_pos.get(gi).ok_or("No Position for Man Tile")?;
+        if let Some(TileCore::GravChanger(dir)) = s.walls.core_at(*p){
+            if let Some(n) = lowest_gen{
+                if n < gi.gen {continue}
+            }
+            lowest_gen = Some(gi.gen);
+            ndir = Some(dir);
+        }
+    }
+
+    if let Some(nd) = ndir {
+        if s.gravity != nd {
+            s.gravity = nd;
+            s.p_mode = PlayMode::Grav;
+        }
+    }
+    Ok(())
+
+}
 
 
 pub fn gravity_sys(s:&mut State){
