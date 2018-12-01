@@ -1,5 +1,6 @@
 use crate::ecs::gen::GenItem;
 
+#[derive(Clone,Debug)]
 pub struct ECItem<T>{
     pub gen:u64,
     pub t:T,
@@ -11,6 +12,7 @@ impl<T> ECItem<T>{
     }
 }
 
+#[derive(Clone,Debug)]
 pub struct ECVec<T>{
     items:Vec<Option<ECItem<T>>>
 }
@@ -79,6 +81,27 @@ impl<T> ECVec<T>{
             }
         }
     }
+
+    pub fn compress(&mut self,cvec:Vec<(GenItem,GenItem)>){
+        let mut res = ECVec::new();
+        for (g_from,g_to) in cvec{
+            if g_from.loc >= self.items.len(){ continue}
+            if let Some(ECItem{gen,t}) = self.items[g_from.loc].take() {
+                if gen == g_from.gen{ 
+                    res.put(g_to,t);
+                }
+            }
+        }
+        *self = res;
+    }
+}
+
+impl<'a,T> IntoIterator for &'a ECVec<T>{
+    type Item = (GenItem,&'a T);
+    type IntoIter = ECIter<'a,T>;
+    fn into_iter(self)->Self::IntoIter{
+        self.iter()
+    }
 }
 
 pub struct ECIter<'a,T>{
@@ -101,5 +124,10 @@ impl<'a,T> Iterator for ECIter<'a,T>
 }
 
 
+#[cfg(test)]
+mod tests{
+  
+
+}
 
 
