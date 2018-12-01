@@ -49,7 +49,7 @@ impl<T> ECVec<T>{
     }
 
     pub fn get(&self,k:GenItem)->Option<&T>{
-        if self.items.len() < k.loc{ return None}
+        if self.items.len() <= k.loc{ return None}
         match self.items[k.loc] {
             Some(ref ecit)=>{
                 (if ecit.gen == k.gen {
@@ -82,13 +82,15 @@ impl<T> ECVec<T>{
         }
     }
 
-    pub fn compress(&mut self,cvec:Vec<(GenItem,GenItem)>){
+    pub fn compress<'a,IT>(&'a mut self,cvec:IT)
+        where IT :IntoIterator<Item=&'a (GenItem,GenItem)>
+    {
         let mut res = ECVec::new();
         for (g_from,g_to) in cvec{
             if g_from.loc >= self.items.len(){ continue}
             if let Some(ECItem{gen,t}) = self.items[g_from.loc].take() {
                 if gen == g_from.gen{ 
-                    res.put(g_to,t);
+                    res.put(*g_to,t);
                 }
             }
         }

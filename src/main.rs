@@ -10,10 +10,9 @@ mod rects;
 mod texture_loader;
 mod gravity;
 mod error;
+mod saver;
 
 fn main() {
-
-
 
     let mut g_state = state::State::new();
 

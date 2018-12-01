@@ -4,6 +4,7 @@ use piston_window::ButtonState;
 use crate::grid::EdgeGrid;
 use crate::texture_loader::TexLoader;
 use crate::rects::{UP,Position};
+use crate::saver::LevelSave;
 
 
 
@@ -26,6 +27,8 @@ pub struct State{
     pub btn_shift:ButtonState,
 
     pub tex_map:TexLoader,
+
+    pub last_save:Option<LevelSave>,
 }
 
 impl State{
@@ -48,6 +51,7 @@ impl State{
             btn_shift:ButtonState::Release,
 
             tex_map:TexLoader::new(),
+            last_save:None,
         }
     }
 
@@ -68,7 +72,7 @@ impl State{
 }
 
 
-#[derive(PartialEq,Debug)]
+#[derive(Copy,Clone,PartialEq,Debug)]
 pub enum Tile{
     Editor,
     Man,

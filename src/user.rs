@@ -5,8 +5,8 @@ use self::Button::*;
 use crate::grid::{EdgeGrid};
 use crate::rects::{Position,UP,DOWN,LEFT,RIGHT};
 use crate::error::GravError;
-
 use std::ops::{Sub,SubAssign};
+use crate::saver::{save_level,restore_level};
 
 fn toggle_tile(s:&mut State,tp:Position,skip:GenItem){
     let mut found:Option<GenItem> = None;
@@ -87,6 +87,9 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             return Ok(());
         }
         Keyboard(Key::H)=> s.p_mode= PlayMode::Grav,
+        Keyboard(Key::S)=> save_level(s),
+        Keyboard(Key::R)=> restore_level(s),
+
         
         _=>{},
     }

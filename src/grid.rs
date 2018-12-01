@@ -25,6 +25,7 @@ pub fn can_pass(e_op:Option<Edge>)->bool{
     }
 }
 
+#[derive(Clone,Debug)]
 pub struct EdgeGrid{
     pub w:i32,
     pub h:i32,
