@@ -1,7 +1,7 @@
 use crate::ecs::gen::GenItem;
 use crate::error::GravError;
 
-use super::state::{State,GravCp,PlayMode,Tile};
+use super::state::{State,GravCp,PlayMode,Tile,AnimState};
 use super::rects::{dir_as_pos};
 use super::grid::{Edge,TileCore,can_pass};
 
@@ -50,9 +50,12 @@ pub fn gravity_sys(s:&mut State){
         if can_pass(s.walls.edge_at(pos,s.gravity+2)) 
                 && can_pass(s.walls.edge_at(npos,s.gravity)){
             v.push((gi,npos));
+        }else {
+            s.anims.drop(gi); 
         }
           
     }
+    //actually move
     let mut moved = true;
     while moved{ 
         moved = false;
@@ -61,7 +64,13 @@ pub fn gravity_sys(s:&mut State){
             match s.grid_pos.iter().find(|(_,pos)|**pos == npos){
                 Some(_)=>v2.push((gi,npos)),
                 None=>{
+                    //set new position
                     s.grid_pos.put(gi,npos);
+
+                    if let Some(Tile::Man) = s.tiles.get(gi){
+                        s.anims.put(gi,AnimState::Jmp);
+                    }
+                    
                     moved = true;
                     s.p_mode = PlayMode::Grav;
                 },
@@ -70,5 +79,10 @@ pub fn gravity_sys(s:&mut State){
         }
         v = v2;
     }
+    //back to waiting
+    for (gi,_) in v {
+        s.anims.drop(gi);
+    }
+
 }
 

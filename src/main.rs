@@ -29,6 +29,11 @@ fn main() {
     tex_map.load(&mut window.factory,"assets/block.png").unwrap();
     tex_map.load(&mut window.factory,"assets/arrow.png").unwrap();
     tex_map.load(&mut window.factory,"assets/man_tr/man_01.png").unwrap();
+    tex_map.load(&mut window.factory,"assets/man_tr/man_02.png").unwrap();
+    tex_map.load(&mut window.factory,"assets/man_tr/man_03.png").unwrap();
+    tex_map.load(&mut window.factory,"assets/man_tr/man_04.png").unwrap();
+    tex_map.load(&mut window.factory,"assets/man_tr/man_05.png").unwrap();
+    tex_map.load(&mut window.factory,"assets/man_tr/man_06.png").unwrap();
     println!("Loaded");
 
     state_map.insert(tex_map);

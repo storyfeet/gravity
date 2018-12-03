@@ -18,7 +18,7 @@ pub struct State{
     pub tiles:ECVec<Tile>,
     pub draw:ECVec<DrawCp>,
     pub gravs:ECVec<GravCp>,
-
+    pub anims:ECVec<AnimState>,
 
     //Useful Data
     pub walls:EdgeGrid,
@@ -42,6 +42,7 @@ impl State{
             tiles:ECVec::new(),
             draw:ECVec::new(), 
             gravs:ECVec::new(),
+            anims:ECVec::new(),
 
 
             //useful Data
@@ -110,4 +111,8 @@ pub enum MoveAction{
     Lf,Rt,Jmp,LfUp,RtUp,LfFar,RtFar
 }
 
+#[derive(Copy,Clone,PartialEq,Debug)]
+pub enum AnimState{
+    Wait,Lf,Rt,Jmp,LfJmp,RtJmp,
+}
 

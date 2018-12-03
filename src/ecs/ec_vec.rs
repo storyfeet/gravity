@@ -31,7 +31,11 @@ impl<T> ECVec<T>{
     }
     pub fn drop(&mut self,k:GenItem){
         if self.items.len() <= k.loc {return}
-        self.items[k.loc] = None;
+        if let Some(n) = &self.items[k.loc]{
+            if n.gen <= k.gen {
+                self.items[k.loc] = None;
+            }
+        }
     }
 
     pub fn get_mut(&mut self,k:GenItem)->Option<&mut T>{

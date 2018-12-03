@@ -6,7 +6,7 @@ use crate::ecs::gen::GenItem;
 use crate::error::GravError;
 use crate::texture_loader::TexLoader;
 
-use super::state::{State,Tile,DrawMode,DrawCp};
+use super::state::{State,Tile,DrawMode,DrawCp,AnimState};
 use super::grid::{Edge,TileCore};
 use super::rects::{Position,UP,DOWN,LEFT,RIGHT,shrink_by,set_pos_angle,rot_about};
 //use graphics::transformed::Transformed;
@@ -25,7 +25,13 @@ pub fn tile_to_draw_sys(s:&mut State,tex_map:&TexLoader)->Result<(),GravError>{
 				(6,shrink_by(r,10.),DrawMode::Tex(t_loc,UP,100.))
 			},
             Tile::Man=>{
-				let (t_loc,_) = tex_map.get_by_path("assets/man_tr/man_01.png").ok_or("man.png not loaded")?;
+				let (t_loc,_) = match s.anims.get(gi){
+                    Some(AnimState::Jmp)=>tex_map.get_by_path("assets/man_tr/man_03.png"),
+                    Some(AnimState::RtJmp)=>tex_map.get_by_path("assets/man_tr/man_06.png"),
+                    Some(AnimState::Rt)=>tex_map.get_by_path("assets/man_tr/man_05.png"),
+                    _=>tex_map.get_by_path("assets/man_tr/man_01.png"),
+                }.ok_or("Texture not loaded")?;
+
                 (5,r, DrawMode::Tex(t_loc,s.gravity,50.))
             },
             Tile::Block=>{
