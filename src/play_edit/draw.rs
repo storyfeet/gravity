@@ -4,6 +4,7 @@ use std::cmp::Ordering;
 
 use crate::ecs::gen::GenItem;
 use crate::error::GravError;
+use crate::texture_loader::TexLoader;
 
 use super::state::{State,Tile,DrawMode,DrawCp};
 use super::grid::{Edge,TileCore};
@@ -13,23 +14,23 @@ use super::rects::{Position,UP,DOWN,LEFT,RIGHT,shrink_by,set_pos_angle,rot_about
 const COL_BAD:[f32;4]= [0.9,0.1,0.1,1.];
 
 
-pub fn tile_to_draw_sys(s:&mut State)->Result<(),GravError>{
+pub fn tile_to_draw_sys(s:&mut State,tex_map:&TexLoader)->Result<(),GravError>{
 
     for (gi,t) in s.tiles.iter(){
         let Position{x,y} = s.grid_pos.get(gi).ok_or("Tile has no position")?;
         let r = [(*x as f64) * 50.,*y as f64 * 50.,50.,50.];
         let (z,rect,mode) = match t{
             Tile::Editor=>{
-                let (t_loc,_) = s.tex_map.get_by_path("assets/cursor.png").ok_or("cursor.png not loaded")?;
-				(6,shrink_by(r,10.),DrawMode::Tex(t_loc,UP))
+                let (t_loc,_) = tex_map.get_by_path("assets/cursor.png").ok_or("cursor.png not loaded")?;
+				(6,shrink_by(r,10.),DrawMode::Tex(t_loc,UP,100.))
 			},
             Tile::Man=>{
-				let (t_loc,_) = s.tex_map.get_by_path("assets/man.png").ok_or("man.png not loaded")?;
-                (5,r, DrawMode::Tex(t_loc,s.gravity))
+				let (t_loc,_) = tex_map.get_by_path("assets/man_tr/man_01.png").ok_or("man.png not loaded")?;
+                (5,r, DrawMode::Tex(t_loc,s.gravity,50.))
             },
             Tile::Block=>{
-				let (t_loc,_) = s.tex_map.get_by_path("assets/block.png").ok_or("man.png not loaded")?;
-                (5,r, DrawMode::Tex(t_loc,UP))
+				let (t_loc,_) = tex_map.get_by_path("assets/block.png").ok_or("man.png not loaded")?;
+                (5,r, DrawMode::Tex(t_loc,UP,100.))
             },
         };
         s.draw.put(gi,DrawCp{z,mode,rect});
@@ -37,7 +38,7 @@ pub fn tile_to_draw_sys(s:&mut State)->Result<(),GravError>{
     Ok(())
 }
 
-pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
+pub fn draw_sys(s:&State,tex_map:&TexLoader,c:Context,g:&mut G2d){
     let mut ls_draw:Vec<GenItem> = s.draw.iter().map(|(g,_)|g.clone()).collect();
 
     ls_draw.sort_unstable_by(|ga,gb|{
@@ -55,9 +56,9 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
             match dc.mode{
                 DrawMode::Rect(rc)=> rc.draw(dc.rect, &draw_state::DrawState::new_alpha(),
                               c.transform,g),
-				DrawMode::Tex(t_loc,t_ang)=>{
-					if let Some(tx) = s.tex_map.get(t_loc){
-						image(tx,set_pos_angle(c.transform,dc.rect,t_ang),g);
+				DrawMode::Tex(t_loc,t_ang,npx)=>{
+					if let Some(tx) = tex_map.get(t_loc){
+						image(tx,set_pos_angle(c.transform,dc.rect,t_ang,npx),g);
 					}
 				}
             }
@@ -65,7 +66,7 @@ pub fn draw_sys(s:&mut State,c:Context,g:&mut G2d){
     }
 }
 
-pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
+pub fn grid_draw_sys(s:&State,tex_map:&TexLoader,c:Context,g:&mut G2d){
     let border = Border{color:[0.,0.,0.,1.],radius:3.0};
     Rectangle::new([1.,1.,1.,1.])
             .border(border)
@@ -89,14 +90,14 @@ pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
                 }
                 Edge::Spike=>{
                     if let Some((_,tx)) = 
-                        s.tex_map.get_by_path("assets/spike.png") {
-						image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],dr+2),g);
+                        tex_map.get_by_path("assets/spike.png") {
+						image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],dr+2,100.),g);
                     }
                 }
                 Edge::Door=>{
                     if let Some((_,tx)) = 
-                        s.tex_map.get_by_path("assets/door.png") {
-						image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],dr+2),g);
+                        tex_map.get_by_path("assets/door.png") {
+						image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],dr+2,100.),g);
                     }
                 }
                 _=>{},
@@ -110,8 +111,9 @@ pub fn grid_draw_sys(s:&State,c:Context,g:&mut G2d){
         let (x1,y1) = (x*50.,y*50.);
         if let TileCore::GravChanger(dr) = core{
             if let Some((_,tx)) = 
-                s.tex_map.get_by_path("assets/arrow.png") {
-                image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],*dr),g);
+                tex_map.get_by_path("assets/arrow.png") {
+                image(tx,set_pos_angle(c.transform,[x1,y1,50.,50.],*dr,100.),g);
+
             }
         }
     }

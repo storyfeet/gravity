@@ -69,10 +69,10 @@ pub fn shrink_by(r:Rect,n:f64)->Rect{
 }
 
 
-pub fn set_pos_angle(ct:[[f64; 3]; 2],r:Rect,ang:usize)->[[f64; 3]; 2]{
+pub fn set_pos_angle(ct:[[f64; 3]; 2],r:Rect,ang:usize,npx:f64)->[[f64; 3]; 2]{
     ct
         .trans(r[0],r[1])
-        .scale(r[2]/100.,r[3]/100.)
+        .scale(r[2]/npx,r[3]/npx)
         .trans(r[2],r[3])
         .rot_deg(dir_as_deg(ang))
         .trans(-r[2],-r[3])

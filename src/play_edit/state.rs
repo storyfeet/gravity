@@ -28,7 +28,7 @@ pub struct State{
     pub btn_ctrl:ButtonState,
     pub btn_shift:ButtonState,
 
-    pub tex_map:TexLoader,
+//    pub tex_map:TexLoader,
 
     pub last_save:Option<LevelSave>,
 }
@@ -52,7 +52,7 @@ impl State{
             btn_ctrl:ButtonState::Release,
             btn_shift:ButtonState::Release,
 
-            tex_map:TexLoader::new(),
+ //           tex_map:TexLoader::new(),
             last_save:None,
         }
     }
@@ -90,7 +90,7 @@ pub struct DrawCp{
 
 pub enum DrawMode{
     Rect(Rectangle),//pist_rect
-	Tex(usize,usize)//tex_ref, angle
+	Tex(usize,usize,f64)//tex_ref, angle, npixels
 }
 
 #[derive(Copy,Clone)]
