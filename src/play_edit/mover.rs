@@ -1,8 +1,9 @@
-use crate::state::{State,PlayMode,MoveAction,Tile};
 use crate::ecs::GenItem;
-use crate::rects::{Position,LEFT,RIGHT,UP};
 use crate::error::GravError;
-use crate::grid::can_pass;
+
+use super::grid::can_pass;
+use super::state::{State,PlayMode,MoveAction,Tile};
+use super::rects::{Position,LEFT,RIGHT,UP};
 
 
 

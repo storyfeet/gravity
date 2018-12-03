@@ -1,20 +1,13 @@
 use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,Input};
 
 mod ecs;
-mod state;
-mod draw;
-mod mover;
-mod user;
-mod grid;
-mod rects;
 mod texture_loader;
-mod gravity;
 mod error;
-mod saver;
+mod play_edit;
 
 fn main() {
 
-    let mut g_state = state::State::new();
+    let mut g_state = play_edit::state::State::new();
 
 
     let mut window:PistonWindow = 
@@ -33,27 +26,6 @@ fn main() {
     println!("Loaded");
 
     while let Some(e) = window.next(){        
-
-        window.draw_2d(&e,|c,g|{
-            clear([1.,0.,0.,1.],g);
-            draw::grid_draw_sys(&g_state,c,g);
-            draw::draw_sys(&mut g_state,c,g);
-        });
-        match e {
-            Event::Input(Input::Button(bargs))=>{
-                user::key_sys(&mut g_state,bargs);
-            }
-            
-            Event::Loop(Loop::Update(d))=>{
-                if mover::timer_sys(&mut g_state,d.dt) {
-                    gravity::gravity_sys(&mut g_state);
-                    mover::move_sys(&mut g_state);
-                    gravity::gravity_arrow_sys(&mut g_state);
-                }
-                draw::tile_to_draw_sys(&mut g_state);
-            },
-            _=>{},//println!("OTHER {:?}",e),
-        }
-
+        self::play_edit::as_scene(&mut window,e,&mut g_state) ;
     }
 }

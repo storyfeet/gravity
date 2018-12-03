@@ -1,6 +1,5 @@
-use crate::rects::Position;
+use super::rects::Position;
 use crate::error::GravError;
-
 
 pub type TileEdge = [Edge;4];
 

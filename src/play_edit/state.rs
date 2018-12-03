@@ -1,10 +1,12 @@
-use crate::ecs::{GenManager,ECVec,GenItem};
 use piston_window::rectangle::{Rectangle};
 use piston_window::ButtonState;
-use crate::grid::EdgeGrid;
+
+use crate::ecs::{GenManager,ECVec,GenItem};
 use crate::texture_loader::TexLoader;
-use crate::rects::{UP,Position};
-use crate::saver::LevelSave;
+
+use super::grid::EdgeGrid;
+use super::rects::{UP,Position};
+use super::saver::LevelSave;
 
 
 

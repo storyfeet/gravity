@@ -1,8 +1,9 @@
 use crate::ecs::gen::{GenManager,GenItem};
 use crate::ecs::ec_vec::{ECVec};
-use crate::state::{State,Tile,PlayMode,GravCp};
-use crate::rects::{Position,UP};
-use crate::grid::EdgeGrid;
+
+use super::state::{State,Tile,PlayMode,GravCp};
+use super::rects::{Position,UP};
+use super::grid::EdgeGrid;
 
 pub struct LevelSave{
     gens:GenManager,

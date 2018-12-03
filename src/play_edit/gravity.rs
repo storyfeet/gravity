@@ -1,8 +1,9 @@
-use crate::state::{State,GravCp,PlayMode,Tile};
-use crate::rects::{dir_as_pos};
 use crate::ecs::gen::GenItem;
-use crate::grid::{Edge,TileCore,can_pass};
 use crate::error::GravError;
+
+use super::state::{State,GravCp,PlayMode,Tile};
+use super::rects::{dir_as_pos};
+use super::grid::{Edge,TileCore,can_pass};
 
 
 pub fn gravity_arrow_sys(s:&mut State)->Result<(),GravError>{

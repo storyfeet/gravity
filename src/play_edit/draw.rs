@@ -1,12 +1,13 @@
-use crate::state::{State,Tile,DrawMode,DrawCp};
-use crate::grid::{Edge,TileCore};
-use crate::ecs::gen::GenItem;
-use crate::rects::{Position,UP,DOWN,LEFT,RIGHT,shrink_by,set_pos_angle,rot_about};
-use crate::error::GravError;
-
 use piston_window::rectangle::{Rectangle,Border};
 use piston_window::{image,Context,G2d,draw_state,line,Transformed};
 use std::cmp::Ordering;
+
+use crate::ecs::gen::GenItem;
+use crate::error::GravError;
+
+use super::state::{State,Tile,DrawMode,DrawCp};
+use super::grid::{Edge,TileCore};
+use super::rects::{Position,UP,DOWN,LEFT,RIGHT,shrink_by,set_pos_angle,rot_about};
 //use graphics::transformed::Transformed;
 
 const COL_BAD:[f32;4]= [0.9,0.1,0.1,1.];

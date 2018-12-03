@@ -1,12 +1,15 @@
 use piston_window::{ButtonArgs,keyboard::Key,Button,ButtonState};
-use crate::state::{State,Tile,GravCp,PlayMode,MoveAction};
-use crate::ecs::{GenItem};
-use self::Button::*;
-use crate::grid::{EdgeGrid};
-use crate::rects::{Position,UP,DOWN,LEFT,RIGHT};
-use crate::error::GravError;
 use std::ops::{Sub,SubAssign};
-use crate::saver::{save_level,restore_level};
+
+use crate::ecs::{GenItem};
+use crate::error::GravError;
+
+use super::state::{State,Tile,GravCp,PlayMode,MoveAction};
+use super::grid::{EdgeGrid};
+use super::rects::{Position,UP,DOWN,LEFT,RIGHT};
+use super::saver::{save_level,restore_level};
+
+use self::Button::*;
 
 fn toggle_tile(s:&mut State,tp:Position,skip:GenItem){
     let mut found:Option<GenItem> = None;
