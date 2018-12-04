@@ -70,12 +70,14 @@ pub fn shrink_by(r:Rect,n:f64)->Rect{
 
 
 pub fn set_pos_angle(ct:[[f64; 3]; 2],r:Rect,ang:usize,npx:f64)->[[f64; 3]; 2]{
+    let sc = r[2]/npx;
+
     ct
         .trans(r[0],r[1])
-        .scale(r[2]/npx,r[3]/npx)
-        .trans(r[2],r[3])
+        .scale(sc,sc)
+        .trans(r[2]*0.5/sc,r[3]*0.5/sc)
         .rot_deg(dir_as_deg(ang))
-        .trans(-r[2],-r[3])
+        .trans(-r[2]*0.5/sc,-r[3]*0.5/sc)
 }
 
 
