@@ -45,12 +45,12 @@ pub fn tile_draw_sys(s:&State,tex_map:&TexLoader,c:Context,g:&mut G2d){
         };
         let (npx,flip,txf) = match ddat.t{
             Tile::Man=> match s.anims.get(ddat.gi){
-                Some(AnimState::Lf)=>(50.,true,"assets/man_tr/man_05.png"),
-                Some(AnimState::Rt)=>(50.,false,"assets/man_tr/man_05.png"),
-                Some(AnimState::Jmp)=>(50.,false,"assets/man_tr/man_03.png"),
-                Some(AnimState::LfJmp)=>(50.,true,"assets/man_tr/man_06.png"),
-                Some(AnimState::RtJmp)=>(50.,false,"assets/man_tr/man_06.png"),
-                _=>(50.,false,"assets/man_tr/man_01.png"),
+                Some(AnimState::Lf)=>(50.,true,"assets/man_tr/man_03.png"),
+                Some(AnimState::Rt)=>(50.,false,"assets/man_tr/man_03.png"),
+                Some(AnimState::Jmp)=>(50.,false,"assets/man_tr/man_02.png"),
+                Some(AnimState::LfJmp)=>(50.,true,"assets/man_tr/man_05.png"),
+                Some(AnimState::RtJmp)=>(50.,false,"assets/man_tr/man_05.png"),
+                _=>(50.,false,"assets/man_tr/man_00.png"),
             },
             Tile::Block=>(100.,false,"assets/block.png"),
             Tile::Editor=>(100.,false,"assets/cursor.png"),
