@@ -24,7 +24,7 @@ pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap){
     window.draw_2d(&e,|c,g|{
         clear([1.,0.,0.,1.],g);
         draw::grid_draw_sys(&g_state,t_map,c,g);
-        draw::draw_sys(&g_state,t_map,c,g);
+        draw::tile_draw_sys(&g_state,t_map,c,g);
     });
     match e {
         Event::Input(Input::Button(bargs))=>{
@@ -37,7 +37,7 @@ pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap){
                 mover::move_sys(&mut g_state);
                 gravity::gravity_arrow_sys(&mut g_state);
             }
-            draw::tile_to_draw_sys(&mut g_state,t_map);
+            //draw::tile_to_draw_sys(&mut g_state,t_map);
         },
         _=>{},//println!("OTHER {:?}",e),
     }

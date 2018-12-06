@@ -16,7 +16,6 @@ pub struct State{
     pub g_man:GenManager,
     pub grid_pos:ECVec<Position>,
     pub tiles:ECVec<Tile>,
-    pub draw:ECVec<DrawCp>,
     pub gravs:ECVec<GravCp>,
     pub anims:ECVec<AnimState>,
 
@@ -40,7 +39,6 @@ impl State{
             g_man:GenManager::new(),
             grid_pos:ECVec::new(),
             tiles:ECVec::new(),
-            draw:ECVec::new(), 
             gravs:ECVec::new(),
             anims:ECVec::new(),
 
@@ -69,7 +67,6 @@ impl State{
         self.g_man.drop_item(gi);
         self.grid_pos.drop(gi);
         self.tiles.drop(gi);
-        self.draw.drop(gi);
         self.gravs.drop(gi);
     }
 }

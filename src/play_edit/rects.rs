@@ -69,6 +69,23 @@ pub fn shrink_by(r:Rect,n:f64)->Rect{
 }
 
 
+pub trait QTrans
+where Self:Sized
+{
+    fn deg_about(self,x:f64,y:f64,deg:f64)->Self;
+
+    fn dir_about(self,x:f64,y:f64,dir:usize)->Self{
+        self.deg_about(x,y,dir_as_deg(dir))
+    }
+}
+
+impl<T:Transformed+Sized> QTrans for T{
+    fn deg_about(self,x:f64,y:f64,deg:f64)->Self{
+        self.trans(x,y).rot_deg(deg).trans(-x,-y)
+    }
+}
+
+
 pub fn set_pos_angle(ct:[[f64; 3]; 2],r:Rect,ang:usize,npx:f64)->[[f64; 3]; 2]{
     let sc = r[2]/npx;
 

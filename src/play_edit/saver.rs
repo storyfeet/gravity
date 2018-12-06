@@ -34,7 +34,6 @@ pub fn restore_level(s:&mut State){
         s.grid_pos = sv.positions.clone();
         s.tiles = sv.tiles.clone();
         s.gravs = sv.gravs.clone();
-        s.draw = ECVec::new();
 
         s.gravity = UP;
         s.p_mode = PlayMode::Wait;
