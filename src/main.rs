@@ -1,4 +1,4 @@
-use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,Input};
+use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,Input,Glyphs,TextureSettings};
 use std::cell::RefCell;
 use crate::scene::SceneAction;
 
@@ -44,9 +44,12 @@ fn main() {
     tex_map.load(&mut window.factory,"assets/man_tr/man_03.png").unwrap();
     tex_map.load(&mut window.factory,"assets/man_tr/man_04.png").unwrap();
     tex_map.load(&mut window.factory,"assets/man_tr/man_05.png").unwrap();
+
+    let font = Glyphs::new("assets/fonts/data-latin.ttf",window.factory.clone(),TextureSettings::new()).unwrap();
     println!("Loaded");
 
     state_map.insert(tex_map);
+    state_map.insert(RefCell::new(font));
 
     let mut scene_stack = Vec::new();
     scene_stack.push(Menu);
