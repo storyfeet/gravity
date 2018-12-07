@@ -1,4 +1,4 @@
-use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,Input,keyboard::Key,Button::Keyboard,ButtonState,Glyphs};
+use piston_window::{Window,PistonWindow,WindowSettings,Event,Loop,clear,Input,keyboard::Key,Button::Keyboard,ButtonState,Glyphs};
 use anymap::AnyMap;
 use std::cell::RefCell;
 
@@ -32,9 +32,11 @@ pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap)->Result<
     let mut font=state_map.get::<RefCell<Glyphs>>().ok_or("Could not Get Font")?.borrow_mut();
 
 
+    let sz = window.window.size();
+
     window.draw_2d(&e,|c,g|{
         clear([1.,1.,0.,1.],g);
-        draw::draw_sys(&mut *m_state,&mut *font,c,g);
+        draw::draw_sys(&mut *m_state,&mut *font,sz,c,g);
     });
 
     match e {
