@@ -3,6 +3,8 @@ use anymap::AnyMap;
 use std::cell::RefCell;
 
 use crate::texture_loader::TexLoader;
+use crate::scene::SceneAction;
+use crate::error::GravError;
 
 pub mod state;
 use self::state::State;
@@ -15,7 +17,7 @@ pub mod gravity;
 pub mod saver;
 
 
-pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap){
+pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap)->Result<SceneAction,GravError>{
 
     let mut g_state = state_map.get::<RefCell<State>>().unwrap().borrow_mut();
 
@@ -28,7 +30,10 @@ pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap){
     });
     match e {
         Event::Input(Input::Button(bargs))=>{
-            user::key_sys(&mut g_state,bargs);
+            match user::key_sys(&mut g_state,bargs)?{
+                SceneAction::Cont=>{},
+                r=>return Ok(r),
+            }
         }
         
         Event::Loop(Loop::Update(d))=>{
@@ -42,5 +47,6 @@ pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap){
         _=>{},//println!("OTHER {:?}",e),
     }
 
+    Ok(SceneAction::Cont)
 
 }

@@ -1,7 +1,10 @@
 
 pub enum SceneAction{
-    Exit
-     
+    Cont,
+    DropOff,
+    Quit,
+    Replace(&'static str),
+    Child(&'static str),
 }
 
 

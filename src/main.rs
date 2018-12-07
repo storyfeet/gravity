@@ -1,10 +1,21 @@
 use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,Input};
 use std::cell::RefCell;
+use crate::scene::SceneAction;
 
 mod ecs;
 mod texture_loader;
 mod error;
 mod play_edit;
+mod scene;
+mod menu;
+
+pub enum SceneSelection{
+    Menu,
+    Play,
+    Edit,
+}
+use self::SceneSelection::*;
+
 
 fn main() {
 
@@ -15,7 +26,6 @@ fn main() {
 
     let mut window:PistonWindow = 
         WindowSettings::new("Gravity",[640,480])
-                    .exit_on_esc(true)
                     .samples(0)
                     .build()
                     .unwrap();
@@ -38,7 +48,32 @@ fn main() {
 
     state_map.insert(tex_map);
 
+    let mut scene_stack = Vec::new();
+    scene_stack.push(Menu);
+
     while let Some(e) = window.next(){        
-        self::play_edit::as_scene(&mut window,e,&mut state_map) ;
+
+        if scene_stack.len() == 0 {
+            println!("Byee");
+            return;
+        }
+
+        let s_res = match scene_stack[scene_stack.len()-1] {
+            Menu=>self::menu::as_scene(&mut window,e,&mut state_map),
+            _=>self::play_edit::as_scene(&mut window,e,&mut state_map),
+        };
+        
+        match s_res{
+            Ok(SceneAction::Quit)=>return,
+            Ok(SceneAction::DropOff)=>{scene_stack.pop();},
+            Ok(SceneAction::Child(s))=>match s{
+                "PLAY"=>scene_stack.push(Play),
+                _=>{},
+            }
+            Err(e)=>{println!("{:?}",e);},
+            _=>{},
+        }
     }
 }
+
+

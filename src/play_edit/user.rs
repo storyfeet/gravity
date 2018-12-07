@@ -1,15 +1,15 @@
-use piston_window::{ButtonArgs,keyboard::Key,Button,ButtonState};
+use piston_window::{ButtonArgs,keyboard::Key,Button,Button::*,ButtonState};
 use std::ops::{Sub,SubAssign};
 
 use crate::ecs::{GenItem};
 use crate::error::GravError;
+use crate::scene::SceneAction;
 
 use super::state::{State,Tile,GravCp,PlayMode,MoveAction};
 use super::grid::{EdgeGrid};
 use super::rects::{Position,UP,DOWN,LEFT,RIGHT};
 use super::saver::{save_level,restore_level};
 
-use self::Button::*;
 
 fn toggle_tile(s:&mut State,tp:Position,skip:GenItem){
     let mut found:Option<GenItem> = None;
@@ -52,14 +52,14 @@ fn _dec_ip<T:PartialOrd + SubAssign+Copy>(v:&mut T,n:T){
 }
 
 
-pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
+pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<SceneAction,GravError>{
     if k.state != ButtonState::Press{
         match k.button {
             Keyboard(Key::LCtrl)=>s.btn_ctrl = ButtonState::Release,
             Keyboard(Key::LShift)=>s.btn_shift = ButtonState::Release,
             _=>{},
         }
-        return Ok(())
+        return Ok(SceneAction::Cont);
     }
     match k.button{
         Keyboard(Key::LCtrl)=>s.btn_ctrl = ButtonState::Press,
@@ -76,24 +76,23 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             Keyboard(Key::Down)=>s.walls = EdgeGrid::new(sw,sh+1),
             _=>{},
         }
-        return Ok(())
+        return Ok(SceneAction::Cont);
     }
 
     //Stuff that doesn't need an editor
     match k.button {
+        Keyboard(Key::Escape)=>return Ok(SceneAction::DropOff),
         Keyboard(Key::E)=>{
             if let Some((ed_ref,_)) = s.tiles.iter().find(|(_,t)|**t == Tile::Editor){
                 s.drop(ed_ref);
-                return Ok(());
+                return Ok(SceneAction::Cont);
             }
             s.add_tile(Tile::Editor,Position{x:0,y:0});
-            return Ok(());
+            return Ok(SceneAction::Cont);
         }
         Keyboard(Key::H)=> s.p_mode= PlayMode::Grav,
         Keyboard(Key::S)=> save_level(s),
         Keyboard(Key::R)=> restore_level(s),
-
-        
         _=>{},
     }
 
@@ -110,7 +109,7 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
                 Keyboard(Key::Down)=>s.walls.toggle_edge(ed_pos,DOWN)?,
                 _=>{},
             }
-            return Ok(())
+            return Ok(SceneAction::Cont);
         }
         match k.button{
             Keyboard(Key::Left)=> s.grid_pos.put(ed_ref,ed_pos+Position::new(-1,0)),
@@ -122,12 +121,12 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
             
             _=>{},
         }
-        return Ok(());
+        return Ok(SceneAction::Cont);
     }
 
     //Normal Movement
     if s.p_mode != PlayMode::Wait {
-        return Ok(());
+        return Ok(SceneAction::Cont);
     }
     match k.button {
         Keyboard(Key::Left)=>s.p_mode = PlayMode::Move( 
@@ -152,5 +151,5 @@ pub fn key_sys(s:&mut State,k:ButtonArgs)->Result<(),GravError>{
         _=>{},
 
     }
-    Ok(())
+    Ok(SceneAction::Cont)
 }

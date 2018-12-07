@@ -1,3 +1,6 @@
+
+
+#[derive(Debug,Clone,PartialEq)]
 pub enum GravError{
     Mess(String),
 }
