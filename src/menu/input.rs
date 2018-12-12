@@ -1,6 +1,6 @@
 use piston_window::{ButtonArgs,keyboard::Key,Button::Keyboard,ButtonState};
 
-use crate::error::GravError;
+use crate::error::{GravError,GravError::NonError};
 use crate::scene::SceneAction;
 
 use super::state::MenuState;
@@ -62,5 +62,13 @@ pub fn key_sys(st:&mut MenuState,ba:ButtonArgs)->Result<SceneAction,GravError>{
             _=>{},
         }
     }
+
     Ok(SceneAction::Cont)
+}
+
+pub fn text_sys(st:&mut MenuState,s:String)->Result<(),GravError>{
+    let f = st.focus.ok_or(NonError)?;
+
+    let t = st.texts.get_mut(f).ok_or(NonError)?;
+    Ok(())
 }

@@ -350,6 +350,7 @@ dependencies = [
  "anymap 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "gfx_core 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "gfx_device_gl 0.15.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_conf 0.1.1",
  "piston2d-graphics 0.28.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "piston_window 0.85.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -402,6 +403,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "khronos_api"
 version = "3.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "lazy_conf"
+version = "0.1.1"
 
 [[package]]
 name = "lazy_static"

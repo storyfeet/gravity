@@ -5,15 +5,19 @@ use crate::ecs::ec_vec::ECVec;
 pub struct MenuState{
     pub gm:GenManager,
     pub buttons:ECVec<&'static str>,
+    pub texts:ECVec<String>,
     pub focus:Option<GenItem>,
+    pub folder:String,
 }
 
 impl MenuState{    
-    pub fn new()->Self{
+    pub fn new(folder:String)->Self{
         MenuState{
             gm:GenManager::new(),
             buttons:ECVec::new(),
+            texts:ECVec::new(),
             focus:None,
+            folder,
         }
     }
 

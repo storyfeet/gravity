@@ -1,6 +1,11 @@
-use piston_window::{PistonWindow,WindowSettings,Event,Loop,clear,Input,Glyphs,TextureSettings};
+
 use std::cell::RefCell;
+use piston_window::{PistonWindow,WindowSettings,Glyphs,TextureSettings};
+
+use lazy_conf::config;
 use crate::scene::SceneAction;
+use crate::error::GravError;
+
 
 mod ecs;
 mod texture_loader;
@@ -17,11 +22,20 @@ pub enum SceneSelection{
 use self::SceneSelection::*;
 
 
-fn main() {
+fn main(){
 
+    let mut conf = config("-c",&["test_data/conf.lz","{HOME}/.config/gravity/conf.lz"]).expect("config file path badly formed");
+    
+    let l_folder = conf.grab().cf("config.folder").fg("-f")
+                        .help("Folder for Levels")
+                        .s().unwrap_or("levels".to_string());
+
+    
     let mut state_map = anymap::AnyMap::new();
 
     state_map.insert(RefCell::new(play_edit::state::State::new()));
+
+    state_map.insert(RefCell::new(menu::setup(l_folder)));
     
 
     let mut window:PistonWindow = 

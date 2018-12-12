@@ -11,3 +11,4 @@ gfx_device_gl = "0.15.3"
 piston2d-graphics = "0.28.0"
 anymap = "0.12.1"
 #nfd = "0.0.4"
+lazy_conf = {path = "../../mlibs/lazy_conf/"}
