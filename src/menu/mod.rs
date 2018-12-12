@@ -1,4 +1,4 @@
-use piston_window::{Window,PistonWindow,WindowSettings,Event,Loop,clear,Input,keyboard::Key,Button::Keyboard,ButtonState,Glyphs};
+use piston_window::{Window,PistonWindow,Event,Loop,clear,Input,Glyphs};
 use anymap::AnyMap;
 use std::cell::RefCell;
 
@@ -9,6 +9,7 @@ use self::state::MenuState;
 
 mod draw;
 mod state;
+mod input;
 
 
 pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap)->Result<SceneAction,GravError>{
@@ -41,13 +42,7 @@ pub fn as_scene(window:&mut PistonWindow,e:Event,state_map:&mut AnyMap)->Result<
 
     match e {
         Event::Input(Input::Button(bargs))=>{
-            if bargs.state == ButtonState::Press {
-                match bargs.button {
-                    Keyboard(Key::Escape)=>return Ok(SceneAction::DropOff),
-                    Keyboard(Key::Return)=>return Ok(SceneAction::Child("PLAY")),
-                    _=>{},
-                }
-            }
+            return input::key_sys(&mut *m_state,bargs);
         }
         _=>{},
     }
