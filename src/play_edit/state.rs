@@ -1,8 +1,9 @@
 use piston_window::rectangle::{Rectangle};
 use piston_window::ButtonState;
+use serde_derive::{Serialize,Deserialize};
 
 use crate::ecs::{GenManager,ECVec,GenItem};
-use crate::texture_loader::TexLoader;
+//use crate::texture_loader::TexLoader;
 
 use super::grid::EdgeGrid;
 use super::rects::{UP,Position};
@@ -72,7 +73,7 @@ impl State{
 }
 
 
-#[derive(Copy,Clone,PartialEq,Debug)]
+#[derive(Copy,Clone,PartialEq,Debug,Serialize,Deserialize)]
 pub enum Tile{
     Editor,
     Man,
@@ -91,7 +92,7 @@ pub enum DrawMode{
 	Tex(usize,usize,f64)//tex_ref, angle, npixels
 }
 
-#[derive(Copy,Clone)]
+#[derive(Copy,Clone,Serialize,Deserialize)]
 pub struct GravCp{
     pub priority:usize,
 }

@@ -1,6 +1,7 @@
+use serde_derive::{Serialize,Deserialize};
 use crate::ecs::gen::GenItem;
 
-#[derive(Clone,Debug)]
+#[derive(Clone,Debug,Serialize,Deserialize)]
 pub struct ECItem<T>{
     pub gen:u64,
     pub t:T,
@@ -12,7 +13,7 @@ impl<T> ECItem<T>{
     }
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone,Debug,Serialize,Deserialize)]
 pub struct ECVec<T>{
     items:Vec<Option<ECItem<T>>>
 }
@@ -39,9 +40,8 @@ impl<T> ECVec<T>{
     }
 
     pub fn get_mut(&mut self,k:GenItem)->Option<&mut T>{
-        if self.items.len() < k.loc{ return None}
-        match self.items[k.loc] {
-            Some(ref mut ecit)=>{
+        match self.items.get_mut(k.loc) {
+            Some(Some(ref mut ecit))=>{
                 (if ecit.gen == k.gen {
                     Some(&mut ecit.t)
                 }else{
@@ -53,9 +53,9 @@ impl<T> ECVec<T>{
     }
 
     pub fn get(&self,k:GenItem)->Option<&T>{
-        if self.items.len() <= k.loc{ return None}
-        match self.items[k.loc] {
-            Some(ref ecit)=>{
+    //    if self.items.len() <= k.loc{ return None}
+        match self.items.get(k.loc) {
+            Some(Some(ref ecit))=>{
                 (if ecit.gen == k.gen {
                     Some(&ecit.t)
                 }else{

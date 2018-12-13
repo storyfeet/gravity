@@ -1,9 +1,12 @@
-use super::rects::Position;
+use serde_derive::{Serialize,Deserialize};
+
 use crate::error::GravError;
+
+use super::rects::Position;
 
 pub type TileEdge = [Edge;4];
 
-#[derive(Copy,Clone,Debug,PartialEq)]
+#[derive(Copy,Clone,Debug,PartialEq,Serialize,Deserialize)]
 pub enum Edge{
     Clear,
     Wall,
@@ -11,7 +14,7 @@ pub enum Edge{
     Door,
 }
 
-#[derive(Copy,Clone,Debug,PartialEq)]
+#[derive(Copy,Clone,Debug,PartialEq,Serialize,Deserialize)]
 pub enum TileCore{
     Clear,
     GravChanger(usize),
@@ -24,7 +27,7 @@ pub fn can_pass(e_op:Option<Edge>)->bool{
     }
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone,Debug,Serialize,Deserialize)]
 pub struct EdgeGrid{
     pub w:i32,
     pub h:i32,

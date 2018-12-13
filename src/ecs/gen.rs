@@ -1,12 +1,14 @@
+use serde_derive::{Serialize,Deserialize};
 
-#[derive(Copy,Clone,PartialEq,Debug)]
+
+#[derive(Copy,Clone,PartialEq,Debug,Serialize,Deserialize)]
 pub struct GenItem{
     pub loc:usize,
     pub gen:u64,
 }
 
 
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone,Debug,PartialEq,Serialize,Deserialize)]
 pub struct GenManager{
     c_gen:u64,
     items:Vec<Option<u64>>,

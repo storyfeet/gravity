@@ -1,5 +1,8 @@
-use piston_window::Transformed;
 use std::ops::Add;
+
+use piston_window::Transformed;
+use serde_derive::{Serialize,Deserialize};
+
 
 pub const UP:usize = 0;
 pub const RIGHT:usize = 1;
@@ -11,7 +14,7 @@ pub fn dir_as_deg(u:usize)->f64{
 }
 
 
-#[derive(Copy,Clone,PartialEq,Debug)]
+#[derive(Copy,Clone,PartialEq,Debug,Serialize,Deserialize)]
 pub struct Position{
     pub x:i32,
     pub y:i32,
