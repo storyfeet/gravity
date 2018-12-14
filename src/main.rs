@@ -4,7 +4,6 @@ use piston_window::{PistonWindow,WindowSettings,Glyphs,TextureSettings};
 
 use lazy_conf::config;
 use crate::scene::SceneAction;
-use crate::error::GravError;
 
 
 mod ecs;
@@ -13,6 +12,7 @@ mod error;
 mod play_edit;
 mod scene;
 mod menu;
+mod svg;
 
 pub enum SceneSelection{
     Menu,

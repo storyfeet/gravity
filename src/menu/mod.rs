@@ -19,6 +19,7 @@ pub fn setup(folder:String)->MenuState{
     n_state.add_button("Edit");
     n_state.add_button("Load");
     n_state.add_button("Save");
+    n_state.add_button("Svg Out");
     n_state.add_button("Quit");
 
     n_state
