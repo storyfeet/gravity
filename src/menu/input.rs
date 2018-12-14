@@ -64,7 +64,8 @@ pub fn key_sys(
                             Some(tx) => {
                                 let js = serde_json::to_string(&gst.last_save)
                                     .expect("Could not Jsonify");
-                                let path = PathBuf::from(&st.folder).join(format!("{}.json", tx));
+                                let path =
+                                    PathBuf::from(&st.folder).join(tx).with_extension("json");
                                 let mut f =
                                     File::create(&path).map_err(|_| "Could not create file")?;
                                 write!(f, "{}", js).map_err(|_| "could not write")?;
@@ -75,7 +76,8 @@ pub fn key_sys(
                         },
                         Some("Load") => match st.texts.get(f) {
                             Some(tx) => {
-                                let path = PathBuf::from(&st.folder).join(format!("{}.json", tx));
+                                let path =
+                                    PathBuf::from(&st.folder).join(tx).with_extension("json");
                                 let ld = File::open(path).map_err(|_| "Could not read")?;
                                 let sv: LevelSave = serde_json::from_reader(ld)
                                     .map_err(|_| "Could not jsonread")?;
@@ -87,8 +89,12 @@ pub fn key_sys(
                         },
                         Some("Svg Out") => match st.texts.get(f) {
                             Some(tx) => {
-                                let path = PathBuf::from(&st.folder).join(format!("{}.svg", tx));
-                                crate::svg::svg_out(&gst, &path, "../pics")?;
+                                let path = PathBuf::from(&st.folder).join(tx).with_extension("svg");
+                                return match &gst.last_save {
+                                    Some(ls) => crate::svg::svg_out(&ls, &path, "../pics")
+                                        .map(|_| SceneAction::Cont),
+                                    None => Err("Nothing to save".into()),
+                                };
                             }
                             None => st.texts.put(f, "".to_string()),
                         },

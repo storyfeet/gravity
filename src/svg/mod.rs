@@ -5,21 +5,24 @@ use mksvg::{Args, PathD, SvgArg, SvgIO, SvgWrite};
 
 use crate::error::GravError;
 use crate::play_edit::grid::Edge;
-use crate::play_edit::state::State;
+use crate::play_edit::saver::LevelSave;
 
-pub fn svg_out(st: &State, path: &Path, imgpath: &str) -> Result<(), GravError> {
+pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &str) -> Result<(), GravError> {
     let f = File::create(path).map_err(|_| "Could not create")?;
 
     let mut s = SvgIO::new(f);
 
-    let l_sv = match &st.last_save {
-        Some(ls) => ls,
-        None => return Err("Nothing to save".into()),
-    };
-
     let walls = &l_sv.walls;
 
     s.start(walls.w * 50, walls.h * 50);
+
+    s.rect(
+        0,
+        0,
+        walls.w * 50,
+        walls.h * 50,
+        Args::new().stroke("black").fill("white"),
+    );
 
     for (i, v) in walls.v.iter().enumerate() {
         let x = i as i32 % walls.w;
