@@ -1,23 +1,22 @@
-use serde_derive::{Serialize,Deserialize};
+use serde_derive::{Deserialize, Serialize};
 
-use crate::ecs::gen::{GenManager};
-use crate::ecs::ec_vec::{ECVec};
+use crate::ecs::ec_vec::ECVec;
+use crate::ecs::gen::GenManager;
 
-use super::state::{State,Tile,PlayMode,GravCp};
-use super::rects::{Position,UP};
 use super::grid::EdgeGrid;
+use super::rects::{Position, UP};
+use super::state::{GravCp, PlayMode, State, Tile};
 
-
-#[derive(Serialize,Deserialize)]
-pub struct LevelSave{
-    gens:GenManager,
-    tiles:ECVec<Tile>,
-    positions:ECVec<Position>,
-    gravs:ECVec<GravCp>,
-    walls:EdgeGrid,
+#[derive(Serialize, Deserialize)]
+pub struct LevelSave {
+    pub gens: GenManager,
+    pub tiles: ECVec<Tile>,
+    pub positions: ECVec<Position>,
+    pub gravs: ECVec<GravCp>,
+    pub walls: EdgeGrid,
 }
 
-pub fn save_level(s:&mut State){
+pub fn save_level(s: &mut State) {
     let mut gens = s.g_man.clone();
     let mut tiles = s.tiles.clone();
     let mut positions = s.grid_pos.clone();
@@ -28,10 +27,16 @@ pub fn save_level(s:&mut State){
     tiles.compress(&cv);
     positions.compress(&cv);
     gravs.compress(&cv);
-    s.last_save = Some(LevelSave{gens,tiles,positions,walls,gravs});
+    s.last_save = Some(LevelSave {
+        gens,
+        tiles,
+        positions,
+        walls,
+        gravs,
+    });
 }
 
-pub fn restore_level(s:&mut State){
+pub fn restore_level(s: &mut State) {
     if let Some(sv) = &mut s.last_save {
         s.walls = sv.walls.clone();
         s.g_man = sv.gens.clone();
@@ -43,5 +48,3 @@ pub fn restore_level(s:&mut State){
         s.p_mode = PlayMode::Wait;
     }
 }
-
-
