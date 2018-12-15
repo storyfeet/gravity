@@ -42,6 +42,13 @@ fn main() {
 
     let convert = conf.grab().fg("-svg").help("File to convert to svg").s();
 
+    let res_path = conf
+        .grab()
+        .fg("-res")
+        .help("Svg resourse path")
+        .s()
+        .unwrap_or("".to_string());
+
     if conf.help("Gravity") {
         return;
     }
@@ -52,7 +59,7 @@ fn main() {
         println!("Converting from {:?} to {:?} ", p_from, p_to);
         let ld = File::open(p_from).expect("Could not read");
         let sv: LevelSave = serde_json::from_reader(ld).expect("Could not jsonread");
-        svg_out(&sv, &p_to, "images").expect("Could not write svg");
+        svg_out(&sv, &p_to, &PathBuf::from(&res_path)).expect("Could not write svg");
 
         return;
     }

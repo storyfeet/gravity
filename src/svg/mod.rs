@@ -4,10 +4,10 @@ use std::path::Path;
 use mksvg::{Args, PathD, SvgArg, SvgIO, SvgWrite};
 
 use crate::error::GravError;
-use crate::play_edit::grid::Edge;
+use crate::play_edit::grid::{Edge, TileCore};
 use crate::play_edit::saver::LevelSave;
 
-pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &str) -> Result<(), GravError> {
+pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &Path) -> Result<(), GravError> {
     let f = File::create(path).map_err(|_| "Could not create")?;
 
     let mut s = SvgIO::new(f);
@@ -24,24 +24,72 @@ pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &str) -> Result<(), GravE
         Args::new().stroke("black").fill("white"),
     );
 
+    //walls / edges
     for (i, v) in walls.v.iter().enumerate() {
         let x = i as i32 % walls.w;
         let y = i as i32 / walls.w;
-        let xp = x * 50;
-        let yp = y * 50;
+        s.g_translate(x * 50, y * 50);
         for dir in 0..4 {
+            s.g_rotate((dir + 2) * 90, 25, 25);
             match v[dir] {
                 Edge::Wall => {
                     s.path(
-                        PathD::abs().m(xp, yp).l(xp + 50, yp + 50),
-                        Args::new().stroke("black"),
+                        PathD::abs().m(0, 50).l(50, 50),
+                        Args::new().stroke("red").stroke_width(2),
                     );
                 }
-                _ => {}
+                Edge::Spike => s.img(
+                    &imgpath
+                        .join("spike.png")
+                        .to_str()
+                        .expect("Path to string fail"),
+                    0,
+                    0,
+                    50,
+                    50,
+                ),
+                Edge::Door => s.img(
+                    &imgpath
+                        .join("door.png")
+                        .to_str()
+                        .expect("Path to string fail"),
+                    0,
+                    0,
+                    50,
+                    50,
+                ),
+                Edge::Clear => {}
             }
+            s.g_end();
         }
+
+        s.g_end();
     }
 
+    //tile middles
+    for (i, v) in walls.vc.iter().enumerate() {
+        let x = i as i32 % walls.w;
+        let y = i as i32 / walls.w;
+        s.g_translate(x * 50, y * 50);
+        match v {
+            TileCore::GravChanger(n) => {
+                s.g_rotate(n * 90, 25, 25);
+                s.img(
+                    &imgpath
+                        .join("arrow.png")
+                        .to_str()
+                        .expect("Path to string fail"),
+                    0,
+                    0,
+                    50,
+                    50,
+                );
+                s.g_end();
+            }
+            _ => {}
+        }
+        s.g_end();
+    }
     s.end();
 
     Ok(())
