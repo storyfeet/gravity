@@ -17,6 +17,14 @@ pub struct LevelSave {
 }
 
 pub fn save_level(s: &mut State) {
+    if let Some(gi) = s
+        .tiles
+        .iter()
+        .find(|(_, t)| **t == Tile::Editor)
+        .map(|(gi, _)| gi)
+    {
+        s.drop(gi);
+    }
     let mut gens = s.g_man.clone();
     let mut tiles = s.tiles.clone();
     let mut positions = s.grid_pos.clone();

@@ -6,6 +6,7 @@ use mksvg::{Args, PathD, SvgArg, SvgIO, SvgWrite};
 use crate::error::GravError;
 use crate::play_edit::grid::{Edge, TileCore};
 use crate::play_edit::saver::LevelSave;
+use crate::play_edit::state::Tile;
 
 pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &Path) -> Result<(), GravError> {
     let f = File::create(path).map_err(|_| "Could not create")?;
@@ -90,7 +91,28 @@ pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &Path) -> Result<(), Grav
         }
         s.g_end();
     }
-    s.end();
 
+    for (gi, t) in &l_sv.tiles {
+        let p = l_sv
+            .positions
+            .get(gi)
+            .expect("Unexpected Tile with no position");
+
+        s.g_translate(p.x * 50, p.y * 50);
+        let fname = match t {
+            Tile::Man => "man_tr/man_00.png",
+            Tile::Block => "block.png",
+            _ => "cursor.png",
+        };
+        s.img(
+            &imgpath.join(fname).to_str().expect("Path to string fail"),
+            0,
+            0,
+            50,
+            50,
+        );
+        s.g_end();
+    }
+    s.end();
     Ok(())
 }

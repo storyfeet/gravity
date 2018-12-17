@@ -68,7 +68,7 @@ fn main() {
 
     state_map.insert(RefCell::new(play_edit::state::State::new()));
 
-    state_map.insert(RefCell::new(menu::setup(l_folder)));
+    state_map.insert(RefCell::new(menu::setup(l_folder, res_path)));
 
     let mut window: PistonWindow = WindowSettings::new("Gravity", [640, 480])
         .samples(0)

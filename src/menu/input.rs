@@ -91,10 +91,12 @@ pub fn key_sys(
                             Some(tx) => {
                                 let path = PathBuf::from(&st.folder).join(tx).with_extension("svg");
                                 return match &gst.last_save {
-                                    Some(ls) => {
-                                        crate::svg::svg_out(&ls, &path, &PathBuf::from("../pics"))
-                                            .map(|_| SceneAction::Cont)
-                                    }
+                                    Some(ls) => crate::svg::svg_out(
+                                        &ls,
+                                        &path,
+                                        &PathBuf::from(&st.svg_link),
+                                    )
+                                    .map(|_| SceneAction::Cont),
                                     None => Err("Nothing to save".into()),
                                 };
                             }
