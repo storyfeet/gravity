@@ -22,7 +22,7 @@ pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &Path) -> Result<(), Grav
         0,
         walls.w * 50,
         walls.h * 50,
-        Args::new().stroke("black").fill("white"),
+        Args::new().stroke("black").fill("white").stroke_width(4),
     );
 
     //walls / edges
@@ -36,7 +36,7 @@ pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &Path) -> Result<(), Grav
                 Edge::Wall => {
                     s.path(
                         PathD::abs().m(0, 50).l(50, 50),
-                        Args::new().stroke("red").stroke_width(2),
+                        Args::new().stroke("red").stroke_width(3),
                     );
                 }
                 Edge::Spike => s.img(
