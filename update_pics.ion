@@ -1,0 +1,9 @@
+for s in levels/*.json
+    gravity -svg $s -res ../assets
+end
+
+for s in levels/*.svg
+    let t = $(basename $s -s ".svg").png
+    inkscape $s --export-png ~/games/puzzle/gravity/data/levelpics/$t
+end
+

@@ -54,10 +54,10 @@ pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &Path) -> Result<(), Grav
                         .join("door.png")
                         .to_str()
                         .expect("Path to string fail"),
-                    0,
-                    0,
-                    50,
-                    50,
+                    2,
+                    2,
+                    46,
+                    46,
                 ),
                 Edge::Clear => {}
             }
@@ -80,10 +80,10 @@ pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &Path) -> Result<(), Grav
                         .join("arrow.png")
                         .to_str()
                         .expect("Path to string fail"),
-                    0,
-                    0,
-                    50,
-                    50,
+                    2,
+                    2,
+                    46,
+                    46,
                 );
                 s.g_end();
             }
@@ -106,10 +106,10 @@ pub fn svg_out(l_sv: &LevelSave, path: &Path, imgpath: &Path) -> Result<(), Grav
         };
         s.img(
             &imgpath.join(fname).to_str().expect("Path to string fail"),
-            0,
-            0,
-            50,
-            50,
+            5,
+            5,
+            40,
+            40,
         );
         s.g_end();
     }
