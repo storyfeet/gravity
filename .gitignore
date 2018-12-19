@@ -3,4 +3,5 @@
 **/*.zip
 **/*.ttf
 **/*.svg
+assets/*/png
 assets/**/*.png
